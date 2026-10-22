@@ -1,0 +1,55 @@
+{
+  "rules": {
+    "devices": {
+      ".read": true,
+      "$deviceId": {
+        "meta": {
+          ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+        },
+        "config": {
+          ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+        },
+        "live": {
+          ".write": "auth != null && root.child('deviceAuth').child($deviceId).val() === auth.uid",
+          ".validate": "newData.hasChildren(['levelCm', 'distanceCm', 'status', 'ts']) && newData.child('status').val().matches(/^(green|yellow|red)$/)"
+        }
+      }
+    },
+    "readings": {
+      ".read": true,
+      "$deviceId": {
+        ".indexOn": ["ts"],
+        ".write": "auth != null && root.child('deviceAuth').child($deviceId).val() === auth.uid"
+      }
+    },
+    "alerts": {
+      ".read": true,
+      "$deviceId": {
+        ".indexOn": ["ts"],
+        ".write": "auth != null && (root.child('deviceAuth').child($deviceId).val() === auth.uid || root.child('admins').child(auth.uid).val() === true)"
+      }
+    },
+    "stats": {
+      ".read": true,
+      "$deviceId": {
+        ".write": "auth != null && root.child('deviceAuth').child($deviceId).val() === auth.uid"
+      }
+    },
+    "safeZones": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+    "hotlines": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
+    },
+    "deviceAuth": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    }
+  }
+}
