@@ -1,0 +1,15 @@
+{
+  "name": "floodwatch-scripts",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Dev scripts: seed sample data and simulate sensors until the ESP8266 hardware exists.",
+  "scripts": {
+    "seed": "node scripts/seed.mjs",
+    "simulate": "node scripts/simulate.mjs",
+    "simulate:clear": "node scripts/simulate.mjs --clear"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.5.0"
+  }
+}

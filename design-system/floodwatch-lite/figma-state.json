@@ -1,0 +1,56 @@
+{
+  "runId": "floodwatch-ds-2026-10-22",
+  "fileKey": "RxQHYzvJHcAOOm2lEXvVHJ",
+  "scope": "full-library rebuilt from Claude Design artifact DhyT8Lm4tzVcFmWanVpKiE (dark only); screens not yet in Figma",
+  "decisions": {
+    "palette": ["#1D3E53", "#254B62", "#476D7C", "#77ABB7"],
+    "fonts": { "heading": "Lexend", "body": "Source Sans 3" },
+    "modes": "Figma plan allows 1 mode per collection -> Color collection has Dark only; Light mapping kept in MASTER.md / artifact tokens.json",
+    "codeSyntax": "WEB code syntax = artifact's flat CSS names: var(--bg-canvas), var(--accent), var(--status-danger), var(--space-4), var(--radius-md)",
+    "libraries": "Material 3 + Simple Design System attached but token model incompatible -> build locally",
+    "icons": "Lucide SVG via createNodeFromSvg"
+  },
+  "step": "done",
+  "entities": {
+    "collections": { "Primitives": "VariableCollectionId:29:33", "Color": "VariableCollectionId:29:63", "Spacing": "VariableCollectionId:29:97", "Radius": "VariableCollectionId:29:108" },
+    "variablesAdded20261022b": ["navy/500 #6F97A6", "red/300 #FCA5A5", "slate/300 #B8C4D2", "status/offline/subtle -> navy/800"],
+    "variables": {
+      "bg/canvas": "VariableID:29:64", "bg/surface": "VariableID:29:65", "bg/raised": "VariableID:29:66", "bg/hover": "VariableID:29:67",
+      "border/default": "VariableID:29:68", "border/strong": "VariableID:29:69",
+      "text/primary": "VariableID:29:70", "text/secondary": "VariableID:29:71", "text/muted": "VariableID:29:72", "text/on-accent": "VariableID:29:73",
+      "accent/default": "VariableID:29:74", "accent/hover": "VariableID:29:75", "accent/subtle": "VariableID:29:76", "focus/ring": "VariableID:29:77",
+      "status/normal/solid": "VariableID:29:78", "status/normal/on": "VariableID:29:79", "status/normal/subtle": "VariableID:29:80", "status/normal/text": "VariableID:29:81",
+      "status/warning/solid": "VariableID:29:82", "status/warning/on": "VariableID:29:83", "status/warning/subtle": "VariableID:29:84", "status/warning/text": "VariableID:29:85",
+      "status/danger/solid": "VariableID:29:86", "status/danger/on": "VariableID:29:87", "status/danger/subtle": "VariableID:29:88", "status/danger/text": "VariableID:29:89",
+      "status/offline/solid": "VariableID:29:90", "status/offline/on": "VariableID:29:91", "status/offline/text": "VariableID:29:92",
+      "safe/solid": "VariableID:29:93", "safe/on": "VariableID:29:94", "map/route": "VariableID:29:95", "overlay/scrim": "VariableID:29:96",
+      "space/1": "VariableID:29:98", "space/2": "VariableID:29:99", "space/3": "VariableID:29:100", "space/4": "VariableID:29:101", "space/5": "VariableID:29:102",
+      "space/6": "VariableID:29:103", "space/8": "VariableID:29:104", "space/10": "VariableID:29:105", "space/12": "VariableID:29:106", "space/16": "VariableID:29:107",
+      "radius/sm": "VariableID:29:109", "radius/md": "VariableID:29:110", "radius/lg": "VariableID:29:111", "radius/xl": "VariableID:29:112", "radius/full": "VariableID:29:113"
+    },
+    "pages": { "Page 1 (user, palette + Home)": "0:1", "Design System": "29:144", "Screens": "29:145" },
+    "sections": { "Foundations · Icons": "59:415", "Actions": "59:416", "Status & data": "59:417", "Navigation": "59:418", "Forms": "59:419", "Cards": "59:420", "Map": "59:421" },
+    "textStyles": {"Display/Number":"S:4188c19dedaba257969fd5b063caa5d1e4d69b0a,","Heading/H1":"S:d98311452ddbe09cc263cb6f8fa7e8507353a454,","Heading/H2":"S:4b746550921f9a6e6eb2eb9144c14c1421dcae38,","Heading/H3":"S:7e35223ad9a7df7ee57ce94eb9662b1954989d11,","Overline":"S:4b0467568744f33afd73ea47250e21fdba74669f,","Body/L":"S:49c6a9277698edf217bcf5ae59c761cfbbf92f03,","Body/M":"S:747eb57beeb78ead63ebf2c20f106bb7c06a20ac,","Body/M Strong":"S:9d6682c49ea699090100d9bf7db08017ccb03e70,","Body/S":"S:0f413adb5349282b1d859e8208379a6459c6398a,","Label/Button":"S:0a62975b27851a863a0801ae21abdd5d75a537a2,","Label/S":"S:bf05972323c4d1e3c1da5ef345b9d96ac858805a,","Caption":"S:d8a975a403d910c8dc04bba1e266a5922c5ef85a,"},
+    "effectStyles": {"Elevation/Raised":"S:34582bbe85855d958093f44abd167b7bdafd20d7,","Elevation/Overlay":"S:6ea371ccf6447f37e49fbd58e5307981a84b3341,","Focus/Ring":"S:c737fb71f908d0ccd37ad821944d61d3e754605d,"},
+    "components": {
+      "IconsBoard": "30:2", "Button": "31:34", "IconButton": "31:51", "StatusChip": "31:79",
+      "DangerBanner": "33:72", "NavItem": "33:87", "BottomNav": "33:88", "TopNavLink": "33:139", "TopNav": "33:140",
+      "Input": "33:177", "SegmentItem": "33:182", "SegmentedControl": "33:183",
+      "StatCard": "56:124", "AlertRow": "56:144", "Legend": "56:161", "MapPin": "56:209", "WaterGauge": "56:266",
+      "SafeZoneCard": "59:297", "HotlineCard": "59:340", "MapPopup": "59:365", "RouteSheet": "59:414"
+    },
+    "icons": {"map":"30:7","shield-check":"30:11","phone":"30:14","bell":"30:18","info":"30:23","layers":"30:28","locate":"30:36","navigation":"30:39","x":"30:43","triangle-alert":"30:48","octagon-alert":"30:53","circle-check":"30:57","wifi-off":"30:66","chevron-right":"30:69","chevron-left":"30:72","clock":"30:76","trending-up":"30:80","droplet":"30:83","menu":"30:88","lock":"30:92","plus":"30:96","radio":"30:103","footprints":"30:109","car":"30:115","download":"30:120","more":"30:125","pencil":"30:128","trash":"30:133","users":"30:139","thermometer":"30:142","log-out":"30:147"}
+  },
+  "componentsAdded20261022c": { "SafeZoneCard(rebuilt: Open/Warning/Closed/InDanger)": "65:397", "HotlineCard(rebuilt: Layout x Status)": "65:477", "Switch": "65:482", "FilterChip": "65:489", "ChoiceTile": "65:502", "Select": "65:509", "SensorListItem": "65:551", "AlertTableRow": "65:575", "icons check/eye/eye-off/arrow-right/chevron-down/map-pin": "65:216/65:220/65:226/65:230/65:233/65:237" },
+  "screens": {
+    "page": "29:145",
+    "sections": { "Map": "66:270", "Sensor detail": "69:730", "Safe zones": "70:993", "Emergency hotlines": "70:1478", "Alert log": "71:1658", "About": "71:2114", "Admin": "72:2069" },
+    "frames": { "Map · Mobile": "66:271", "Map · Mobile · In danger, routing": "66:412", "Map · Mobile · Map modes": "66:528", "Map · Desktop": "68:486", "Map · Desktop · In danger, routing": "68:683", "Sensor · Mobile": "69:731", "Sensor · Desktop": "69:928", "Safe zones · Mobile": "70:994", "Safe zones · Desktop": "70:1228", "Hotlines · Mobile": "70:1479", "Hotlines · Desktop": "70:1622", "Alerts · Mobile": "71:1659", "Alerts · Desktop": "71:1895", "About · Mobile": "71:2115", "About · Desktop": "71:2246", "Admin login · Mobile": "72:2070", "Admin · Mobile": "72:2116", "Admin login · Desktop": "72:2198", "Admin · Desktop": "72:2262" },
+    "mapImages": "uploaded from the screens artifact's 3 blobs into 8 'Map image' rectangles"
+  },
+  "pendingValidations": [],
+  "nextSteps": ["Light mode needs a paid Figma plan (2nd variable mode)", "Prototype links between screens (not built)"],
+  "lessons": ["paint base color must be the resolved token RGB or unresolved bindings render black", "TEXT component props share one default across variants - don't use them for per-variant words", "INSTANCE_SWAP renames the nested instance - find it by parent, not by name", "failed use_figma scripts roll back entirely", "createAutoLayout/createFrame default to a WHITE fill - always set fills = [] on inner frames", "frames have no .append() - use appendChild", "a script that succeeds keeps every node it created, even detached drafts", "paint opacity on a variable-bound fill renders solid - use node.opacity on a fill-only layer", "a VERTICAL auto-layout frame resized then given a narrower FIXED child can collapse to the child's width - set counterAxisSizingMode FIXED after adding children", "component variants built with resize() stay fixed width - set primaryAxisSizingMode AUTO for label-driven items"],
+  "planLimits": "Starter: 1 variable mode per collection, 3 pages max",
+  "completedSteps": ["discovery", "variables", "text+effect styles", "pages", "token sync with artifact", "white-fill cleanup", "all 21 components", "page sections"]
+}
