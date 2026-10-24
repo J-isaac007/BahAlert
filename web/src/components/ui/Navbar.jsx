@@ -82,7 +82,7 @@ export function BottomNav() {
           <span className="fw-navitem__pill">
             <l.icon size={22} aria-hidden="true" />
           </span>
-          {l.mobileLabel ?? l.label}
+          <span className="fw-navitem__label">{l.mobileLabel ?? l.label}</span>
         </Link>
       ))}
     </nav>
