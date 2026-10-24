@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
+  // GitHub Pages serves from /BahAlert/; the deploy workflow sets BASE_PATH
+  base: process.env.BASE_PATH || '/',
   plugins: [
     react(),
     VitePWA({
@@ -19,7 +21,7 @@ export default defineConfig({
       workbox: {
         // App shell only. Mapbox terms forbid caching map tiles.
         globPatterns: ['**/*.{js,css,html,svg}'],
-        navigateFallback: '/index.html',
+        navigateFallback: 'index.html',
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
     }),
