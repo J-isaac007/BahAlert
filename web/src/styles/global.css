@@ -264,6 +264,9 @@ h1, h2, h3, p { margin: 0; }
 .btn-delete { color: var(--status-danger-text) !important; }
 .map-picker { position: relative; height: 300px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-strong); }
 @media (max-width: 1023.98px) {
+  /* 4 tabs with desktop padding need ~380px; stretch to fit 328px instead of overflowing */
+  .admin-head .fw-seg { display: flex; width: 100%; }
+  .admin-head .fw-seg button { flex: 1 1 auto; justify-content: center; padding: 0 var(--space-2); white-space: nowrap; }
   .admin-edit { padding: var(--space-4); }
   .admin-form { grid-template-columns: 1fr; }
   .admin-form .span-2 { grid-column: auto; }
