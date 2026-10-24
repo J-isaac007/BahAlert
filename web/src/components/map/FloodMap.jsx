@@ -1,35 +1,36 @@
-import { forwardRef, useEffect, useRef, useState } from 'react';
-import Map, {
-  FullscreenControl,
-  GeolocateControl,
-  NavigationControl,
-  Popup,
-  ScaleControl,
-  Source,
-} from 'react-map-gl/mapbox';
-import { BASE_STYLES, DEFAULT_VIEW, FILL, MAPBOX_TOKEN } from '../../lib/mapStyles.js';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import Map, { GeolocateControl, Marker, Popup, ScaleControl, Source } from 'react-map-gl/mapbox';
+import { BASE_STYLES, DEFAULT_STYLE, DEFAULT_VIEW, FILL, MAPBOX_TOKEN } from '../../lib/mapStyles.js';
 import { pointsBbox } from '../../lib/geojson.js';
 import DangerZoneLayer from './layers/DangerZoneLayer.jsx';
 import HeatmapLayer from './layers/HeatmapLayer.jsx';
 import RouteLayer from './layers/RouteLayer.jsx';
-import SafeZoneLayer, { SAFE_ZONE_LAYER_ID } from './layers/SafeZoneLayer.jsx';
-import SensorLayer, { SENSOR_LAYER_ID } from './layers/SensorLayer.jsx';
+import SafeZoneLayer from './layers/SafeZoneLayer.jsx';
+import SensorLayer from './layers/SensorLayer.jsx';
 import SafeZonePopup from './SafeZonePopup.jsx';
 import SensorPopup from './SensorPopup.jsx';
 
-const INTERACTIVE = [SENSOR_LAYER_ID, SAFE_ZONE_LAYER_ID];
-
-// ref -> Mapbox GeolocateControl, so the page can call .trigger()
+// ref -> { locate, zoomIn, zoomOut, flyTo } so the page's own buttons drive the map.
+// selected = { kind: 'sensor' | 'zone', id } lives in the page; showPopup draws it as a Mapbox popup (desktop).
 const FloodMap = forwardRef(function FloodMap(
-  { sensors, safeZones, stats, routeResult, styleKey, overlays, onGeolocate, onNavigate },
-  geolocateRef,
+  {
+    sensors, safeZones, stats, routeResult, styleKey, overlays, userPos,
+    selected, onSelect, showPopup, showNames, onGeolocate, onNavigate,
+  },
+  ref,
 ) {
   const mapRef = useRef(null);
+  const geolocateRef = useRef(null);
   const fitted = useRef(false);
   const [loaded, setLoaded] = useState(false);
-  const [cursor, setCursor] = useState('');
-  const [popup, setPopup] = useState(null); // { kind: 'sensor' | 'zone', id, lngLat }
-  const style = BASE_STYLES[styleKey] ?? BASE_STYLES.street;
+  const style = BASE_STYLES[styleKey] ?? BASE_STYLES[DEFAULT_STYLE];
+
+  useImperativeHandle(ref, () => ({
+    locate: () => geolocateRef.current?.trigger(),
+    zoomIn: () => mapRef.current?.zoomIn(),
+    zoomOut: () => mapRef.current?.zoomOut(),
+    flyTo: (lngLat) => mapRef.current?.easeTo({ center: lngLat, duration: 600 }),
+  }));
 
   // Frame all sensors + safe zones once, when data first arrives
   useEffect(() => {
@@ -52,19 +53,9 @@ const FloodMap = forwardRef(function FloodMap(
     );
   }
 
-  const onClick = (e) => {
-    const f = e.features?.[0];
-    if (!f) return setPopup(null);
-    setPopup({
-      kind: f.layer.id === SENSOR_LAYER_ID ? 'sensor' : 'zone',
-      id: f.properties.id,
-      lngLat: f.geometry.coordinates,
-    });
-  };
-
   // Look up the live object so popups update while open
-  const popupItem =
-    popup && (popup.kind === 'sensor' ? sensors : safeZones).find((item) => item.id === popup.id);
+  const selectedItem =
+    selected && (selected.kind === 'sensor' ? sensors : safeZones).find((item) => item.id === selected.id);
 
   return (
     <Map
@@ -73,11 +64,7 @@ const FloodMap = forwardRef(function FloodMap(
       initialViewState={DEFAULT_VIEW}
       mapStyle={style.url}
       terrain={style.terrain ? { source: 'mapbox-dem', exaggeration: 1.5 } : undefined}
-      interactiveLayerIds={INTERACTIVE}
-      cursor={cursor}
-      onMouseEnter={() => setCursor('pointer')}
-      onMouseLeave={() => setCursor('')}
-      onClick={onClick}
+      onClick={() => onSelect?.(null)}
       onLoad={() => setLoaded(true)}
       style={FILL}
     >
@@ -89,33 +76,53 @@ const FloodMap = forwardRef(function FloodMap(
       <HeatmapLayer sensors={sensors} stats={stats} visible={overlays.heatmap} />
       <DangerZoneLayer sensors={sensors} visible={overlays.flood} />
       <RouteLayer result={routeResult} visible={overlays.route} />
-      <SafeZoneLayer safeZones={safeZones} visible={overlays.safeZones} />
-      <SensorLayer sensors={sensors} visible={overlays.flood} />
+      <SafeZoneLayer
+        safeZones={safeZones}
+        visible={overlays.safeZones}
+        selectedId={selected?.kind === 'zone' ? selected.id : null}
+        targetId={routeResult?.zone.id}
+        onSelect={onSelect}
+      />
+      <SensorLayer
+        sensors={sensors}
+        visible={overlays.flood}
+        selectedId={selected?.kind === 'sensor' ? selected.id : null}
+        showNames={showNames}
+        onSelect={onSelect}
+      />
 
-      <NavigationControl position="top-right" />
+      {userPos && (
+        <Marker longitude={userPos[0]} latitude={userPos[1]} style={{ zIndex: 4 }}>
+          <span className="fw-user" role="img" aria-label="Your position" />
+        </Marker>
+      )}
+
+      {/* Hidden: our "Show my location" button calls trigger(); we draw the dot ourselves */}
       <GeolocateControl
         ref={geolocateRef}
-        position="top-right"
         trackUserLocation
-        showUserHeading
+        showUserLocation={false}
         positionOptions={{ enableHighAccuracy: true }}
         onGeolocate={(e) => onGeolocate?.([e.coords.longitude, e.coords.latitude])}
+        style={{ display: 'none' }}
       />
-      <FullscreenControl position="top-right" />
-      <ScaleControl position="bottom-left" />
+      <ScaleControl position="bottom-right" />
 
-      {popupItem && (
+      {showPopup && selectedItem && (
         <Popup
-          longitude={popup.lngLat[0]}
-          latitude={popup.lngLat[1]}
-          onClose={() => setPopup(null)}
+          className="fw-mapbox-popup"
+          longitude={selectedItem.lng}
+          latitude={selectedItem.lat}
+          offset={24}
+          closeButton={false}
           closeOnClick={false}
-          maxWidth="280px"
+          maxWidth="300px"
+          onClose={() => onSelect?.(null)}
         >
-          {popup.kind === 'sensor' ? (
-            <SensorPopup sensor={popupItem} />
+          {selected.kind === 'sensor' ? (
+            <SensorPopup sensor={selectedItem} onClose={() => onSelect?.(null)} />
           ) : (
-            <SafeZonePopup zone={popupItem} onNavigate={() => onNavigate?.(popupItem)} />
+            <SafeZonePopup zone={selectedItem} onClose={() => onSelect?.(null)} onNavigate={() => onNavigate?.(selectedItem)} />
           )}
         </Popup>
       )}

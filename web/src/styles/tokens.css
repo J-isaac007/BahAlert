@@ -1,31 +1,51 @@
-:root {
-  --c-brand: #0f4c81;
-  --c-brand-ink: #ffffff;
-  --c-bg: #f6f8fb;
-  --c-surface: #ffffff;
-  --c-text: #111827;
-  --c-muted: #6b7280;
-  --c-border: #e5e7eb;
-
-  --c-green: #16a34a;
-  --c-yellow: #f59e0b;
-  --c-red: #dc2626;
-  --c-offline: #9ca3af;
-  --c-safe: #0ea5e9;
-
-  --radius: 12px;
-  --shadow: 0 4px 16px rgb(0 0 0 / 0.12);
-  --nav-h: 56px;
-  --font: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+/* BahAlert design tokens (design-system/floodwatch-lite, Figma "Color" collection). Dark is the primary theme. */
+:root, [data-theme="dark"] {
+  --brand-sky: #44c2f4; --brand-azure: #0691ca; --brand-ocean: #004883; --brand-wave: #14b8a6;
+  --bg-canvas: #05090d; --bg-surface: #0b151d; --bg-raised: #10202b; --bg-hover: #17303f;
+  --border-default: #1a3242; --border-strong: #4a7290;
+  --text-primary: #f2f8fb; --text-secondary: #a8bfcc; --text-muted: #8aa3b2; --text-on-accent: #05090d;
+  --accent: #44c2f4; --accent-hover: #8be3f7; --accent-subtle: #0b2f45; --focus: #8be3f7;
+  --status-normal: #4ade80; --status-normal-on: #05090d; --status-normal-subtle: #0f2e1e; --status-normal-text: #4ade80;
+  --status-warning: #fbbf24; --status-warning-on: #05090d; --status-warning-subtle: #3a2a0a; --status-warning-text: #fbbf24;
+  --status-danger: #dc2626; --status-danger-on: #ffffff; --status-danger-subtle: #3b1218; --status-danger-text: #fca5a5;
+  --status-offline: #64748b; --status-offline-on: #ffffff; --status-offline-subtle: #10202b; --status-offline-text: #b8c4d2;
+  --safe: #2dd4bf; --safe-on: #05090d; --route: #8be3f7; --scrim: #05090db8;
+  /* Glass surfaces: fill + 1px stroke, with a soft top highlight */
+  --glass-fill: #0e1c26b8; --glass-stroke: #ffffff1a;
+  --glass-highlight: linear-gradient(180deg, #ffffff0f, #ffffff00 55%);
+  --shadow-raised: 0 4px 16px #00000073;
+  --shadow-overlay: 0 16px 40px #00000099, 0 2px 6px #00000059;
+  --focus-ring: 0 0 0 2px #05090d, 0 0 0 4px #8be3f7;
+  color-scheme: dark;
 }
+[data-theme="light"] {
+  --bg-canvas: #eef9fd; --bg-surface: #ffffff; --bg-raised: #ffffff; --bg-hover: #d4f3fc;
+  --border-default: #cfe3ec; --border-strong: #3d6178;
+  --text-primary: #05090d; --text-secondary: #17303f; --text-muted: #3d6178; --text-on-accent: #ffffff;
+  --accent: #004883; --accent-hover: #0691ca; --accent-subtle: #d4f3fc; --focus: #0691ca;
+  --status-normal: #15803d; --status-normal-on: #ffffff; --status-normal-subtle: #f0fdf4; --status-normal-text: #15803d;
+  --status-warning: #b45309; --status-warning-on: #ffffff; --status-warning-subtle: #fffbeb; --status-warning-text: #b45309;
+  --status-danger-subtle: #fef2f2; --status-danger-text: #b91c1c;
+  --status-offline-subtle: #d4f3fc; --status-offline-text: #475569;
+  --safe: #0f766e; --safe-on: #ffffff; --route: #004883; --scrim: #05090d66;
+  --glass-fill: #ffffffcc; --glass-stroke: #05090d14;
+  --glass-highlight: linear-gradient(180deg, #ffffff66, #ffffff00 55%);
+  --shadow-raised: 0 1px 3px #05090d1f, 0 2px 8px #05090d14;
+  --shadow-overlay: 0 8px 24px #05090d29, 0 2px 6px #05090d1a;
+  --focus-ring: 0 0 0 2px #ffffff, 0 0 0 4px #0691ca;
+  color-scheme: light;
+}
+:root {
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px;
+  --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-xl: 24px; --radius-full: 999px;
+  --touch-min: 44px; --touch-lg: 56px; --nav-top: 64px; --nav-bottom: 80px; --panel-side: 400px;
+  --font-display: Poppins, system-ui, sans-serif;
+  --font-body: Inter, system-ui, sans-serif;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --c-bg: #0b1220;
-    --c-surface: #111a2e;
-    --c-text: #e5e7eb;
-    --c-muted: #94a3b8;
-    --c-border: #1f2a44;
-    --shadow: 0 4px 16px rgb(0 0 0 / 0.5);
-  }
+  /* Motion (MASTER.md §4): 150–250 ms ease-out, sheets 250 ms */
+  --ease-out: cubic-bezier(.22, 1, .36, 1);
+  --ease-in-out: cubic-bezier(.65, 0, .35, 1);
+  --ease-spring: cubic-bezier(.34, 1.56, .64, 1);
+  --dur-press: 110ms; --dur-fast: 160ms; --dur-base: 240ms; --dur-slow: 420ms;
 }

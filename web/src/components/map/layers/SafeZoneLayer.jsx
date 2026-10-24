@@ -1,39 +1,42 @@
-import { useMemo } from 'react';
-import { Layer, Source } from 'react-map-gl/mapbox';
-import { safeZonesToFC } from '../../../lib/geojson.js';
-import { SAFE_ZONE_COLOR, visibility } from '../../../lib/mapStyles.js';
+import { ShieldCheck } from 'lucide-react';
+import { Marker } from 'react-map-gl/mapbox';
 
-export const SAFE_ZONE_LAYER_ID = 'safe-zone-points';
-
-// TODO: shield icon via map.addImage (re-add on style.load) and cluster: true when zones grow
-export default function SafeZoneLayer({ safeZones, visible }) {
-  const data = useMemo(() => safeZonesToFC(safeZones), [safeZones]);
-  const vis = visibility(visible);
-  return (
-    <Source id="safe-zones" type="geojson" data={data}>
-      <Layer
-        id={SAFE_ZONE_LAYER_ID}
-        type="circle"
-        layout={{ visibility: vis }}
-        paint={{
-          'circle-radius': 8,
-          'circle-color': ['case', ['get', 'active'], SAFE_ZONE_COLOR, '#9ca3af'],
-          'circle-stroke-width': 3,
-          'circle-stroke-color': '#ffffff',
+// TODO: cluster when zones grow past ~30
+export default function SafeZoneLayer({ safeZones, visible, selectedId, targetId, onSelect }) {
+  if (!visible) return null;
+  return safeZones.map((z) => {
+    const open = z.active !== false;
+    const target = targetId === z.id;
+    return (
+      <Marker
+        key={z.id}
+        longitude={z.lng}
+        latitude={z.lat}
+        anchor="top"
+        offset={[0, target ? -24 : -20]}
+        style={{ zIndex: target || selectedId === z.id ? 3 : 1 }}
+        onClick={(e) => {
+          e.originalEvent.stopPropagation();
+          onSelect?.(selectedId === z.id ? null : { kind: 'zone', id: z.id });
         }}
-      />
-      <Layer
-        id="safe-zone-labels"
-        type="symbol"
-        layout={{
-          visibility: vis,
-          'text-field': ['get', 'name'],
-          'text-size': 11,
-          'text-offset': [0, 1.2],
-          'text-anchor': 'top',
-        }}
-        paint={{ 'text-color': '#075985', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 }}
-      />
-    </Source>
-  );
+      >
+        <button
+          type="button"
+          className="fw-pinbtn"
+          aria-pressed={selectedId === z.id}
+          aria-label={`Safe zone: ${z.name}${open ? '' : ' (closed)'}`}
+        >
+          <span
+            className={`fw-pin ${open ? 'fw-pin--safe' : 'fw-pin--offline'} ${target ? 'fw-pin--active' : ''}`}
+            style={open ? undefined : { width: 32, height: 32 }}
+          >
+            <ShieldCheck size={18} aria-hidden="true" />
+          </span>
+          <span className="fw-pin__label" style={target ? { marginTop: 8 } : undefined}>
+            {z.name}
+          </span>
+        </button>
+      </Marker>
+    );
+  });
 }

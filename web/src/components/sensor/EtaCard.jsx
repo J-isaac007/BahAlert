@@ -1,11 +1,40 @@
+import { TrendingDown, TrendingUp } from 'lucide-react';
 import { formatEta } from '../../lib/flood.js';
 import StatCard from './StatCard.jsx';
 
-const TONE = { overflow: 'red', rising: 'yellow', stable: 'green', unknown: undefined };
+const URGENT_MIN = 30;
 
-// The standout feature: minutes until water reaches the danger line
-export default function EtaCard({ eta, rate }) {
-  const hint =
-    rate == null ? 'Waiting for readings' : `${rate >= 0 ? 'Rising' : 'Falling'} ${Math.abs(rate).toFixed(2)} cm/min`;
-  return <StatCard label="Minutes to overflow" value={formatEta(eta)} hint={hint} tone={TONE[eta.kind]} />;
+const toneOf = ({ kind, minutes }) => {
+  if (kind === 'overflow') return 'danger';
+  if (kind === 'rising') return minutes <= URGENT_MIN ? 'danger' : 'warning';
+  return undefined;
+};
+
+const valueOf = (eta) => {
+  if (eta.kind === 'overflow') return 'Now';
+  if (eta.kind === 'stable') return 'Stable';
+  if (eta.kind === 'unknown') return '—';
+  return formatEta(eta);
+};
+
+// The standout feature: minutes until water reaches the overflow line
+export default function EtaCard({ eta, levelCm, dangerCm, offline = false, className }) {
+  const left = Number.isFinite(levelCm) && Number.isFinite(dangerCm) ? Math.max(0, dangerCm - levelCm) : null;
+  let hint = 'Waiting for more readings';
+  if (offline) hint = 'Sensor offline — no estimate';
+  else if (eta.kind === 'overflow') hint = 'Water is at the overflow line';
+  else if (eta.kind === 'stable') hint = 'Not rising right now';
+  else if (left != null && eta.kind === 'rising') hint = `${Math.round(left)} cm left to the overflow line`;
+
+  return (
+    <StatCard
+      label="Minutes to overflow"
+      value={valueOf(eta)}
+      hint={hint}
+      icon={eta.kind === 'stable' ? TrendingDown : eta.kind === 'unknown' ? undefined : TrendingUp}
+      tone={toneOf(eta)}
+      wide
+      className={className}
+    />
+  );
 }

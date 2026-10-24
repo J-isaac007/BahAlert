@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Route, Routes } from 'react-router';
-import Navbar from './components/ui/Navbar.jsx';
+import { BottomNav, TopNav } from './components/ui/Navbar.jsx';
 import ProtectedRoute from './components/ui/ProtectedRoute.jsx';
 import About from './pages/About.jsx';
 import Alerts from './pages/Alerts.jsx';
@@ -17,10 +17,13 @@ const Admin = lazy(() => import('./pages/Admin.jsx'));
 function Layout() {
   return (
     <div className="app">
-      <Navbar />
-      <Suspense fallback={<p className="page">Loading…</p>}>
-        <Outlet />
-      </Suspense>
+      <TopNav />
+      <main className="app-main">
+        <Suspense fallback={<p className="loading">Loading…</p>}>
+          <Outlet />
+        </Suspense>
+      </main>
+      <BottomNav />
     </div>
   );
 }

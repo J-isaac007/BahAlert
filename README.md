@@ -23,7 +23,9 @@ docs/       data-contract.md — the Firebase shape everyone must follow
    account key to `serviceAccount.json` (Project settings → Service accounts). **Never commit it.**
 6. Install the Firebase CLI: `npm i -g firebase-tools`, then `firebase login`.
 7. Deploy rules: `firebase deploy --only database`.
-8. Make an admin: create a user in Auth, then in the RTDB console add `/admins/<uid>: true`.
+8. Make the first admin: `npm run make-admin -- you@example.com`, then open the printed link to set a password.
+   There is no sign-up: further admins are invited from the site (Admin → Admins → Send invite), and get an
+   email to set their password. Remove one with the Admins tab or `npm run make-admin -- --remove <email>`.
 
 ## 2. Run without hardware
 

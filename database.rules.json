@@ -44,8 +44,18 @@
       ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
     },
     "admins": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
       "$uid": {
-        ".read": "auth != null && auth.uid === $uid"
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true && $uid !== auth.uid",
+        ".validate": "newData.val() === true"
+      }
+    },
+    "adminProfiles": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      "$uid": {
+        ".write": "auth != null && root.child('admins').child(auth.uid).val() === true && $uid !== auth.uid",
+        ".validate": "newData.hasChildren(['email', 'addedAt']) && newData.child('email').isString()"
       }
     },
     "deviceAuth": {

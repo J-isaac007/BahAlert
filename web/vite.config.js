@@ -8,11 +8,11 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'FloodWatch Lite',
-        short_name: 'FloodWatch',
-        description: 'Community flood level monitor and evacuation map',
-        theme_color: '#0f4c81',
-        background_color: '#ffffff',
+        name: 'BahAlert',
+        short_name: 'BahAlert',
+        description: 'Low-cost community flood level monitor and early warning map',
+        theme_color: '#05090d',
+        background_color: '#05090d',
         display: 'standalone',
         icons: [{ src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any maskable' }],
       },

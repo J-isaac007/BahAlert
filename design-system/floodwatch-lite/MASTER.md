@@ -7,8 +7,19 @@ Source of truth for the website's look and behaviour. Page-specific rules can go
 - Figma (Dark-only copy of the Claude Design system — all tokens + 27 components on "Design System", all 19 screens on "Screens", built from component instances, 2026-10-22):
   [FlootWatch-design](https://www.figma.com/design/RxQHYzvJHcAOOm2lEXvVHJ/FlootWatch-design)
 
-> The Claude Design system supersedes a few dark values below for contrast: `border-strong` #6F97A6,
-> `status-danger-text` #FCA5A5, `status-offline-text` #B8C4D2. Token names there are flat (`bg-canvas`,
+> **Rebranded to BahAlert (2026-10-24)** from the team's Canva deck "BahAlert" (design `DAHYwgBpCJQ`).
+> This supersedes the palette, type and "no gradients, no glass" style below; principles, layout, touch,
+> status rules and the map stay. The Claude Design brand book (`project/README.md`) is the current reference.
+> - Name **BahAlert**; tagline "Minutes matter. We give communities those minutes."; built by team Limang Piso, CS Bootcamp 2026.
+> - Logo: orb of flood bands, vector-traced (`web/public/icon.svg`, `web/src/components/ui/Logo.jsx`, Figma `Logo` set, DS `Logos` assets).
+> - Palette: canvas #05090D, surface #0B151D, raised #10202B, accent #44C2F4 (logo sky), hover #8BE3F7,
+>   safe #2DD4BF, brand azure #0691CA / ocean #004883 / wave #14B8A6. Status colours unchanged.
+> - Type: **Poppins** (headings, numbers, buttons, nav, tracked accent overlines) + **Inter** (body).
+> - Glass surfaces (`glass-fill` #0E1C26B8 + 1px `glass-stroke` #FFFFFF1A, top highlight); pill buttons;
+>   teal silk wave backdrop (`web/public/waves.svg`) on login and About only.
+> - Code `border-strong` is #4A7290 (3:1 on surface); Figma `abyss/500` is still #3D6178 — update when the Figma quota allows.
+>
+> The Claude Design system supersedes a few dark values below for contrast. Token names there are flat (`bg-canvas`,
 > `status-danger-text`, …) and match the CSS custom properties the website should use.
 
 ---

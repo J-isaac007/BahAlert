@@ -71,6 +71,9 @@ export function formatEta({ kind, minutes }) {
   if (kind === 'stable') return 'Stable / falling';
   if (kind === 'unknown') return 'Not enough data';
   if (minutes < 1) return '< 1 min';
-  if (minutes < 60) return `${Math.round(minutes)} min`;
-  return `${Math.floor(minutes / 60)} h ${Math.round(minutes % 60)} min`;
+  // Round once up front so 119.7 reads "2 h", not "1 h 60 min"
+  const total = Math.round(minutes);
+  if (total < 60) return `${total} min`;
+  const rest = total % 60;
+  return `${Math.floor(total / 60)} h${rest ? ` ${rest} min` : ''}`;
 }

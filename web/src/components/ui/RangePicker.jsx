@@ -5,11 +5,11 @@ export const RANGES = {
   '7d': 7 * 24 * 3_600_000,
 };
 
-export default function RangePicker({ value, onChange }) {
+export default function RangePicker({ value, onChange, style }) {
   return (
-    <div className="segmented" role="group" aria-label="Time range">
+    <div className="fw-seg" role="radiogroup" aria-label="Time range" style={style}>
       {Object.keys(RANGES).map((k) => (
-        <button key={k} type="button" className={value === k ? 'active' : ''} onClick={() => onChange(k)}>
+        <button key={k} type="button" role="radio" aria-checked={value === k} onClick={() => onChange(k)}>
           {k}
         </button>
       ))}
