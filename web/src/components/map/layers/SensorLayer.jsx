@@ -1,38 +1,41 @@
-import { useMemo } from 'react';
-import { Layer, Source } from 'react-map-gl/mapbox';
-import { sensorsToFC } from '../../../lib/geojson.js';
-import { statusColorExpr, visibility } from '../../../lib/mapStyles.js';
+import { Marker } from 'react-map-gl/mapbox';
+import { StatusIcon, STATUS_LABEL, toneOf } from '../../ui/Status.jsx';
 
-export const SENSOR_LAYER_ID = 'sensor-points';
+// "Sensor 2 — Bridge" -> "Sensor 2"
+const shortName = (name) => name.split(' — ')[0];
+const levelText = (s) => (s.online ? `${Math.round(s.live.levelCm)} cm` : 'Offline');
 
-export default function SensorLayer({ sensors, visible }) {
-  const data = useMemo(() => sensorsToFC(sensors), [sensors]);
-  const vis = visibility(visible);
-  return (
-    <Source id="sensors" type="geojson" data={data}>
-      <Layer
-        id={SENSOR_LAYER_ID}
-        type="circle"
-        layout={{ visibility: vis }}
-        paint={{
-          'circle-radius': 9,
-          'circle-color': statusColorExpr,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#ffffff',
+// HTML pins (icon + word + colour) so they stay focusable and readable. Few sensors per barangay, so Markers are cheap.
+export default function SensorLayer({ sensors, visible, selectedId, showNames, onSelect }) {
+  if (!visible) return null;
+  return sensors.map((s) => {
+    const tone = toneOf(s.status);
+    const label = showNames ? `${shortName(s.name)} · ${levelText(s)}` : levelText(s);
+    return (
+      <Marker
+        key={s.id}
+        longitude={s.lng}
+        latitude={s.lat}
+        anchor="top"
+        offset={[0, -18]}
+        style={{ zIndex: selectedId === s.id ? 3 : 2 }}
+        onClick={(e) => {
+          e.originalEvent.stopPropagation();
+          onSelect?.(selectedId === s.id ? null : { kind: 'sensor', id: s.id });
         }}
-      />
-      <Layer
-        id="sensor-labels"
-        type="symbol"
-        layout={{
-          visibility: vis,
-          'text-field': ['get', 'label'],
-          'text-size': 12,
-          'text-offset': [0, 1.3],
-          'text-anchor': 'top',
-        }}
-        paint={{ 'text-color': '#111827', 'text-halo-color': '#ffffff', 'text-halo-width': 1.5 }}
-      />
-    </Source>
-  );
+      >
+        <button
+          type="button"
+          className="fw-pinbtn"
+          aria-pressed={selectedId === s.id}
+          aria-label={`${s.name}: ${STATUS_LABEL[s.status] ?? 'Offline'}, ${levelText(s)}`}
+        >
+          <span className={`fw-pin fw-pin--${tone}`}>
+            <StatusIcon tone={tone} />
+          </span>
+          <span className="fw-pin__label">{label}</span>
+        </button>
+      </Marker>
+    );
+  });
 }

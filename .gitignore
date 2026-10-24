@@ -3,6 +3,7 @@ dist/
 dev-dist/
 .firebase/
 *.log
+graphify-out/
 
 # secrets
 .env

@@ -20,9 +20,9 @@ export default function HeatmapLayer({ sensors, stats, days = 7, visible }) {
           'heatmap-opacity': ['interpolate', ['linear'], ['zoom'], 13, 0.8, 16, 0],
           'heatmap-color': [
             'interpolate', ['linear'], ['heatmap-density'],
-            0, 'rgba(59,130,246,0)',
-            0.3, '#60a5fa',
-            0.6, '#f59e0b',
+            0, 'rgba(68,194,244,0)',
+            0.3, '#44c2f4',
+            0.6, '#fbbf24',
             1, '#dc2626',
           ],
         }}

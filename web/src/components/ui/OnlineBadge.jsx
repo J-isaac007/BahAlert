@@ -1,13 +1,17 @@
-const ago = (ts) => {
-  const s = Math.round((Date.now() - ts) / 1000);
-  return s < 60 ? `${s}s ago` : `${Math.round(s / 60)} min ago`;
-};
+import { Radio, WifiOff } from 'lucide-react';
+import { timeAgo } from './Status.jsx';
 
+// "Live · updated 4 s ago" / "Offline · 3 min ago"
 export default function OnlineBadge({ sensor }) {
-  if (!sensor.live) return <span className="badge badge-offline">No data yet</span>;
+  if (!sensor.live) return <span className="fw-caption">No data yet</span>;
   return (
-    <span className={`badge ${sensor.online ? 'badge-online' : 'badge-offline'}`}>
-      {sensor.online ? 'Live' : 'Offline'} · {ago(sensor.live.ts)}
+    <span className="fw-caption" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+      {sensor.online ? (
+        <Radio size={14} className="fw-live" style={{ color: 'var(--status-normal-text)' }} aria-hidden="true" />
+      ) : (
+        <WifiOff size={14} style={{ color: 'var(--status-offline-text)' }} aria-hidden="true" />
+      )}
+      {sensor.online ? 'Live' : 'Offline'} · updated {timeAgo(sensor.live.ts)}
     </span>
   );
 }

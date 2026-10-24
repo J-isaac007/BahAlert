@@ -1,21 +1,35 @@
-import { SAFE_ZONE_COLOR, STATUS_COLORS } from '../../lib/mapStyles.js';
+import { ShieldCheck } from 'lucide-react';
+import { StatusIcon } from '../ui/Status.jsx';
 
-const Swatch = ({ color }) => <span className="swatch" style={{ background: color }} />;
+const Pin = ({ tone }) => (
+  <span className={`fw-pin fw-pin--${tone} fw-pin--sm`}>
+    <StatusIcon tone={tone} size={12} strokeWidth={2.5} />
+  </span>
+);
 
 // Only lists what is currently drawn
-export default function Legend({ overlays }) {
+export default function Legend({ overlays, id, className = '' }) {
   return (
-    <div className="legend">
+    <div id={id} className={`fw-legend fw-glass map-legend ${className}`}>
       {overlays.flood && (
         <>
-          <div><Swatch color={STATUS_COLORS.green} /> Normal</div>
-          <div><Swatch color={STATUS_COLORS.yellow} /> Warning</div>
-          <div><Swatch color={STATUS_COLORS.red} /> Danger zone</div>
-          <div><Swatch color={STATUS_COLORS.offline} /> Sensor offline</div>
+          <div className="fw-legend__row"><Pin tone="normal" />Normal</div>
+          <div className="fw-legend__row"><Pin tone="warning" />Warning</div>
+          <div className="fw-legend__row"><span className="fw-legend__zone" />Danger zone</div>
+          <div className="fw-legend__row"><Pin tone="offline" />Sensor offline</div>
         </>
       )}
-      {overlays.safeZones && <div><Swatch color={SAFE_ZONE_COLOR} /> Safe zone</div>}
-      {overlays.heatmap && <div><span className="swatch swatch-heat" /> Often flooded (7 days)</div>}
+      {overlays.safeZones && (
+        <div className="fw-legend__row">
+          <span className="fw-pin fw-pin--safe fw-pin--sm">
+            <ShieldCheck size={12} strokeWidth={2.5} aria-hidden="true" />
+          </span>
+          Safe zone
+        </div>
+      )}
+      {overlays.heatmap && (
+        <div className="fw-legend__row"><span className="fw-legend__heat" />Often flooded (7 days)</div>
+      )}
     </div>
   );
 }

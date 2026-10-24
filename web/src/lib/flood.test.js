@@ -62,4 +62,10 @@ describe('minutesToOverflow', () => {
     expect(formatEta({ kind: 'rising', minutes: 75 })).toBe('1 h 15 min');
     expect(formatEta({ kind: 'overflow', minutes: 0 })).toBe('OVERFLOW NOW');
   });
+
+  it('carries rounding into the hour', () => {
+    expect(formatEta({ kind: 'rising', minutes: 59.6 })).toBe('1 h');
+    expect(formatEta({ kind: 'rising', minutes: 119.7 })).toBe('2 h');
+    expect(formatEta({ kind: 'rising', minutes: 125 })).toBe('2 h 5 min');
+  });
 });

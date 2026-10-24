@@ -1,46 +1,48 @@
-import { STATUS_COLORS } from '../../lib/mapStyles.js';
+import { toneOf } from '../ui/Status.jsx';
 
-const H = 220;
-const W = 90;
-
-// Vertical tank gauge with threshold lines. Top of tank = sensorHeightCm (or danger + 20%).
-export default function WaterGauge({ levelCm, status, config }) {
-  const max = config.sensorHeightCm ?? (config.dangerCm ?? 100) * 1.2;
-  const y = (cm) => H - Math.min(Math.max(cm / max, 0), 1) * H;
-  const lines = [
-    { cm: config.yellowCm, color: STATUS_COLORS.yellow, label: 'Yellow' },
-    { cm: config.redCm, color: STATUS_COLORS.red, label: 'Red' },
-    { cm: config.dangerCm, color: '#7f1d1d', label: 'Danger' },
+// Threshold lines, top to bottom. Top of tank = sensorHeightCm (or danger + 20%).
+export function gaugeLines(config) {
+  return [
+    { cm: config.dangerCm, color: 'var(--text-primary)', label: 'Overflow' },
+    { cm: config.redCm, color: 'var(--status-danger-text)', label: 'Red' },
+    { cm: config.yellowCm, color: 'var(--status-warning-text)', label: 'Yellow' },
   ].filter((l) => Number.isFinite(l.cm));
-  const level = Number.isFinite(levelCm) ? levelCm : 0;
+}
 
-  return (
-    <svg viewBox={`0 0 ${W + 70} ${H + 2}`} className="gauge" role="img" aria-label={`Water level ${level.toFixed(1)} cm`}>
-      <rect x="1" y="1" width={W} height={H} rx="10" fill="none" stroke="currentColor" strokeOpacity="0.3" strokeWidth="2" />
-      <rect
-        x="3"
-        y={y(level)}
-        width={W - 4}
-        height={H - y(level)}
-        rx="8"
-        fill={STATUS_COLORS[status] ?? STATUS_COLORS.offline}
-        fillOpacity="0.75"
-        style={{ transition: 'y 0.6s, height 0.6s' }}
-      />
+const gaugeMax = (config) => config.sensorHeightCm ?? (config.dangerCm ?? 100) * 1.2;
+
+// showScale = labels beside the tank (mobile); desktop lists them next to the number instead
+export default function WaterGauge({ levelCm, status, config, showScale = false, scaleClassName = '' }) {
+  const max = gaugeMax(config);
+  const pct = (cm) => Math.min(Math.max(cm / max, 0), 1) * 100;
+  const level = Number.isFinite(levelCm) ? levelCm : 0;
+  const lines = gaugeLines(config);
+  const tone = toneOf(status);
+
+  const tank = (
+    <div
+      className="fw-gauge"
+      role="img"
+      aria-label={`Water level ${Math.round(level)} cm of ${Math.round(max)}, ${tone}`}
+    >
+      <div className={`fw-gauge__water fw-gauge__water--${tone}`} style={{ height: `${pct(level)}%` }} />
       {lines.map((l) => (
-        <g key={l.label}>
-          <line x1="1" x2={W + 6} y1={y(l.cm)} y2={y(l.cm)} stroke={l.color} strokeWidth="2" strokeDasharray="4 3" />
-          <text x={W + 10} y={y(l.cm) + 4} fontSize="11" fill={l.color}>
-            {l.label} {l.cm}
-          </text>
-        </g>
+        <div key={l.label} className="fw-gauge__line" style={{ bottom: `${pct(l.cm)}%`, borderColor: l.color }} />
       ))}
-      <text x={W / 2} y={H / 2} textAnchor="middle" fontSize="20" fontWeight="700" fill="currentColor">
-        {level.toFixed(1)}
-      </text>
-      <text x={W / 2} y={H / 2 + 16} textAnchor="middle" fontSize="11" fill="currentColor">
-        cm
-      </text>
-    </svg>
+    </div>
+  );
+
+  if (!showScale) return tank;
+  return (
+    <>
+      {tank}
+      <div className={`fw-gauge-scale ${scaleClassName}`} style={{ width: 84 }} aria-hidden="true">
+        {lines.map((l) => (
+          <span key={l.label} style={{ top: `${100 - pct(l.cm)}%`, color: l.color }}>
+            {l.label} {l.cm}
+          </span>
+        ))}
+      </div>
+    </>
   );
 }

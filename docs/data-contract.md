@@ -19,7 +19,8 @@ listen to `/devices` without downloading every reading.
 /safeZones/{id}  { name, type, lat, lng, address, capacity, contact, active }   admin
 /hotlines/{id}   { name, number, category, area, order, verified }              admin
 
-/admins/{uid}: true          set by hand in Firebase console
+/admins/{uid}: true          another admin (Admin > Admins) or `npm run make-admin`; nobody edits their own
+/adminProfiles/{uid}  { email, addedBy, addedAt }   written with /admins; admins read the list
 /deviceAuth/{deviceId}: uid  set by hand — the Firebase Auth account each board signs in with
 ```
 

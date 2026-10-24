@@ -1,48 +1,123 @@
-const km = (m) => (m >= 1000 ? `${(m / 1000).toFixed(1)} km` : `${Math.round(m)} m`);
-const min = (s) => `${Math.max(1, Math.round(s / 60))} min`;
+import { Car, ChevronLeft, CircleCheck, Clock, Footprints, LoaderCircle, Navigation, Phone, TriangleAlert, X } from 'lucide-react';
+import { km, minutes, zoneSummary } from '../../lib/zones.js';
 
-// Bottom sheet with route summary + turn list
-export default function RouteSheet({ result, loading, error, profile, onProfileChange, onClose }) {
+const PROFILES = [
+  ['walking', 'Walk', Footprints],
+  ['driving', 'Drive', Car],
+];
+
+// Route summary + turn list. variant "sheet" = mobile bottom sheet, "panel" = desktop side panel.
+export default function RouteSheet({ result, loading, error, profile, onProfileChange, onClose, variant = 'sheet' }) {
   if (!result && !loading && !error) return null;
+  const panel = variant === 'panel';
 
-  return (
-    <section className="route-sheet" aria-live="polite">
-      <header>
-        <strong>{loading ? 'Finding safe route…' : result ? `To ${result.zone.name}` : 'No route'}</strong>
-        <button type="button" className="btn" onClick={onClose} aria-label="Close route">✕</button>
-      </header>
+  const title = loading && !result ? 'Finding a safe route…' : result ? result.zone.name : 'No route found';
 
-      <div className="route-profile">
-        {['walking', 'driving'].map((p) => (
-          <button
-            key={p}
-            type="button"
-            className={`btn ${profile === p ? 'btn-primary' : ''}`}
-            onClick={() => onProfileChange(p)}
-          >
-            {p === 'walking' ? 'Walk' : 'Drive'}
+  const body = (
+    <>
+      {result && (
+        <div className="fw-sheet__summary">
+          <span>
+            <Clock size={18} aria-hidden="true" />
+            {minutes(result.route.durationS)}
+          </span>
+          <span>
+            <Navigation size={18} aria-hidden="true" />
+            {km(result.route.distanceM)}
+          </span>
+          {result.safe ? (
+            <span className="fw-chip fw-chip--normal" style={{ marginLeft: 'auto' }}>
+              <CircleCheck size={16} aria-hidden="true" />
+              Avoids floods
+            </span>
+          ) : (
+            <span className="fw-chip fw-chip--danger" style={{ marginLeft: 'auto' }}>
+              <TriangleAlert size={16} aria-hidden="true" />
+              Passes flooding
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="fw-seg" role="radiogroup" aria-label="Travel mode" style={{ alignSelf: 'flex-start' }}>
+        {PROFILES.map(([p, label, Icon]) => (
+          <button key={p} type="button" role="radio" aria-checked={profile === p} onClick={() => onProfileChange(p)}>
+            <Icon size={18} aria-hidden="true" />
+            {label}
           </button>
         ))}
       </div>
 
-      {error && <p className="error">{error.message}</p>}
+      {error && (
+        <div className="fw-warnrow" role="alert">
+          <TriangleAlert size={18} aria-hidden="true" style={{ flex: 'none' }} />
+          {error.message}
+        </div>
+      )}
+
+      {result && !result.safe && (
+        <div className="fw-warnrow">
+          <TriangleAlert size={18} aria-hidden="true" style={{ flex: 'none' }} />
+          Every route we found passes a flooded area. Go with care, or call for help.
+        </div>
+      )}
 
       {result && (
-        <>
-          <p>
-            {km(result.route.distanceM)} · {min(result.route.durationS)}
-            {result.provider === 'ors' && <span className="muted"> · flood-avoiding route</span>}
-          </p>
-          {!result.safe && <p className="error">Warning: every route found passes a flooded area. Go with care.</p>}
-          <ol className="route-steps">
-            {result.route.steps.map((s, i) => (
-              <li key={i}>
-                {s.instruction} <span className="muted">{km(s.distanceM)}</span>
-              </li>
-            ))}
-          </ol>
-        </>
+        <ol className="fw-steps">
+          {result.route.steps.map((s, i) => (
+            <li key={i}>
+              <span>{s.instruction}</span>
+              <span>{km(s.distanceM)}</span>
+            </li>
+          ))}
+        </ol>
       )}
+
+      {panel && result?.zone.contact && (
+        <a className="fw-btn fw-btn--secondary" href={`tel:${result.zone.contact}`}>
+          <Phone size={20} aria-hidden="true" />
+          Call {result.zone.name}
+        </a>
+      )}
+    </>
+  );
+
+  if (panel) {
+    return (
+      <div className="fw-col" aria-live="polite" style={{ gap: 20 }}>
+        <button type="button" className="fw-btn fw-btn--ghost" onClick={onClose} style={{ alignSelf: 'flex-start', padding: '0 8px' }}>
+          <ChevronLeft size={20} aria-hidden="true" />
+          Close route
+        </button>
+        <div className="fw-rise">
+          <span className="fw-over">Nearest safe zone</span>
+          <h2 className="fw-h2" style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+            {loading && <LoaderCircle size={22} className="fw-spin" aria-hidden="true" />}
+            {title}
+          </h2>
+          {result && <p className="fw-body-s" style={{ marginTop: 4 }}>{zoneSummary(result.zone)}</p>}
+        </div>
+        {body}
+      </div>
+    );
+  }
+
+  return (
+    <section className="fw-sheet map-sheet" aria-live="polite">
+      <div className="fw-sheet__grip" />
+      <div className="fw-sheet__head">
+        <div>
+          <span className="fw-over">Nearest safe zone</span>
+          <h2 className="fw-h3" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            {loading && <LoaderCircle size={18} className="fw-spin" aria-hidden="true" />}
+            {title}
+          </h2>
+        </div>
+        <button type="button" className="fw-iconbtn" onClick={onClose} aria-label="Close route">
+          <X size={22} aria-hidden="true" />
+        </button>
+      </div>
+      {body}
     </section>
   );
 }

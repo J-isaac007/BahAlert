@@ -1,35 +1,41 @@
 // Mapbox base styles and shared paint expressions.
+// Colours mirror the design tokens (styles/tokens.css, dark theme) — Mapbox paint can't read CSS vars.
 
 export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
 
+// swatch = preview colour on the Map modes tile
 export const BASE_STYLES = {
-  street: { label: 'Street', url: 'mapbox://styles/mapbox/streets-v12' },
-  satellite: { label: 'Satellite', url: 'mapbox://styles/mapbox/satellite-streets-v12' },
-  dark: { label: 'Dark', url: 'mapbox://styles/mapbox/dark-v11' },
-  terrain: { label: '3D Terrain', url: 'mapbox://styles/mapbox/outdoors-v12', terrain: true },
+  street: { label: 'Street', url: 'mapbox://styles/mapbox/streets-v12', swatch: '#e8edf0' },
+  satellite: { label: 'Satellite', url: 'mapbox://styles/mapbox/satellite-streets-v12', swatch: '#3f4a33' },
+  dark: { label: 'Dark', url: 'mapbox://styles/mapbox/dark-v11', swatch: '#1b1f24' },
+  terrain: { label: '3D terrain', url: 'mapbox://styles/mapbox/outdoors-v12', terrain: true, swatch: '#c9d6b8' },
 };
 
+export const DEFAULT_STYLE = 'dark';
+
 export const OVERLAYS = {
-  flood: 'Flood status',
-  safeZones: 'Safe zones',
-  heatmap: 'Flood history (heatmap)',
-  route: 'Route',
+  flood: { label: 'Flood status', hint: 'Sensors and danger zones' },
+  safeZones: { label: 'Safe zones', hint: 'Evacuation centers and shelters' },
+  heatmap: { label: 'Flood history', hint: 'Where it flooded in the last 7 days' },
+  route: { label: 'Route', hint: 'Your way to the nearest safe zone' },
 };
 
 export const DEFAULT_OVERLAYS = { flood: true, safeZones: true, heatmap: false, route: true };
 
-// TODO(team): set to your barangay. Placeholder = Marikina River area.
-export const DEFAULT_VIEW = { longitude: 121.1029, latitude: 14.6507, zoom: 13 };
+// Alangilan–Balagtas, Batangas City (where the sample sensors sit).
+export const DEFAULT_VIEW = { longitude: 121.0705, latitude: 13.7900, zoom: 14.5 };
 
 export const STATUS_COLORS = {
-  green: '#16a34a',
-  yellow: '#f59e0b',
+  green: '#4ade80',
+  yellow: '#fbbf24',
   red: '#dc2626',
-  offline: '#9ca3af',
+  offline: '#64748b',
 };
 
-export const SAFE_ZONE_COLOR = '#0ea5e9';
-export const ROUTE_COLOR = '#2563eb';
+export const SAFE_ZONE_COLOR = '#2dd4bf';
+export const ROUTE_COLOR = '#8be3f7';
+export const CANVAS_COLOR = '#05090d';
+export const DANGER_TEXT_COLOR = '#fca5a5';
 
 export const statusColorExpr = [
   'match',

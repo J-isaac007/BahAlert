@@ -9,7 +9,12 @@ export default function DangerZoneLayer({ sensors, visible }) {
   const layout = { visibility: visibility(visible) };
   return (
     <Source id="danger-zones" type="geojson" data={data}>
-      <Layer id="danger-fill" type="fill" layout={layout} paint={{ 'fill-color': statusColorExpr, 'fill-opacity': 0.25 }} />
+      <Layer
+        id="danger-fill"
+        type="fill"
+        layout={layout}
+        paint={{ 'fill-color': statusColorExpr, 'fill-opacity': ['match', ['get', 'status'], 'red', 0.25, 0.22] }}
+      />
       <Layer id="danger-line" type="line" layout={layout} paint={{ 'line-color': statusColorExpr, 'line-width': 2 }} />
     </Source>
   );

@@ -6,6 +6,7 @@
   "description": "Dev scripts: seed sample data and simulate sensors until the ESP8266 hardware exists.",
   "scripts": {
     "seed": "node scripts/seed.mjs",
+    "make-admin": "node scripts/make-admin.mjs",
     "simulate": "node scripts/simulate.mjs",
     "simulate:clear": "node scripts/simulate.mjs --clear"
   },
