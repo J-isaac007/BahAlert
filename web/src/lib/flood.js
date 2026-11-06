@@ -13,6 +13,7 @@ export function getStatus(levelCm, { yellowCm, redCm }) {
   return STATUS.GREEN;
 }
 
+// `ts` is stamped by the server, so the app passes server time as `now` (see useNow).
 export function isOnline(ts, now = Date.now()) {
   return Number.isFinite(ts) && now - ts <= OFFLINE_AFTER_MS;
 }

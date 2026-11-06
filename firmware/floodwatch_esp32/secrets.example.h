@@ -12,6 +12,8 @@
 #define DEVICE_EMAIL "fw-001@floodwatch.local"
 #define DEVICE_PASSWORD "change-me"
 
-// Optional Telegram alerts (BotFather token + group chat id)
-#define TELEGRAM_BOT_TOKEN ""
-#define TELEGRAM_CHAT_ID ""
+// Phones that get SMS alerts (international format). Kept on the board, never in Firebase,
+// so the numbers don't reach the database or the website.
+static const char *SMS_RECIPIENTS[] = {
+  "+639XXXXXXXXX",
+};

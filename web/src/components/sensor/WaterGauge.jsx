@@ -23,7 +23,7 @@ export default function WaterGauge({ levelCm, status, config, showScale = false,
     <div
       className="fw-gauge"
       role="img"
-      aria-label={`Water level ${Math.round(level)} cm of ${Math.round(max)}, ${tone}`}
+      aria-label={`${tone === 'offline' ? 'Last known water level' : 'Water level'} ${Math.round(level)} cm of ${Math.round(max)}, ${tone}`}
     >
       <div className={`fw-gauge__water fw-gauge__water--${tone}`} style={{ height: `${pct(level)}%` }} />
       {lines.map((l) => (
