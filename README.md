@@ -1,11 +1,11 @@
 # FloodWatch Lite
 
-Low-cost community flood monitor. ESP8266 + HC-SR04 sensors measure channel water levels, push them to
-Firebase, and a map-first website shows flooded areas, warns people inside danger zones, routes them to the
+Low-cost community flood monitor. ESP32 + JSN-SR04T sensors measure channel water levels, sound a siren and
+text residents by SMS (4G modem) when the water rises, push readings to Firebase, and a map-first website shows flooded areas, warns people inside danger zones, routes them to the
 nearest safe zone, and lists Philippine emergency hotlines.
 
 ```
-firmware/   ESP8266 sketch (skeleton — test when hardware arrives)
+firmware/   ESP32 sketch (skeleton — test when hardware arrives)
 web/        React + Vite site (Mapbox map, Chart.js, Firebase)
 scripts/    seed sample data + simulate sensors (no hardware needed)
 docs/       data-contract.md — the Firebase shape everyone must follow
@@ -59,8 +59,10 @@ firebase deploy             # hosting + database rules
 ## 4. When the hardware is ready
 
 1. Create an Auth user for the board, put its UID at `/deviceAuth/<deviceId>`.
-2. Copy `firmware/floodwatch_esp8266/secrets.example.h` → `secrets.h`, fill in.
-3. Flash from Arduino IDE. Stop the simulator. The website needs no change.
+2. Copy `firmware/floodwatch_esp32/secrets.example.h` → `secrets.h`, fill in (Wi-Fi, Firebase, SMS numbers).
+   Wiring notes for every part are in `config.h`. Put a loaded SIM in the A7670/SIM7600 modem.
+3. Flash from Arduino IDE (board: *ESP32 Dev Module*; install the CP210x USB driver if no COM port shows up).
+   Stop the simulator. The website needs no change.
 
 ## Team
 

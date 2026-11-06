@@ -4,7 +4,14 @@ import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
 
 // TODO(M5): fill in team names, final costs.
-const PARTS = ['ESP8266 NodeMCU (Wi-Fi)', 'HC-SR04 ultrasonic sensor', 'DS18B20 thermometer', 'Buzzer, 3 LEDs, resistors'];
+const PARTS = [
+  'ESP32 DevKit (Wi-Fi, USB-C)',
+  'JSN-SR04T waterproof ultrasonic sensor',
+  'DS18B20 waterproof thermometer',
+  '12 V siren, relay, 3 LEDs',
+  'A7670 / SIM7600 4G modem (SMS)',
+  'Solar panel, charge controller, battery',
+];
 
 const COLOURS = [
   [STATUS.GREEN, 'Water is at a safe level.'],

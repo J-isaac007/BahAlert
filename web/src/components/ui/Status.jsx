@@ -1,5 +1,6 @@
 import { CircleCheck, OctagonAlert, TriangleAlert, WifiOff } from 'lucide-react';
 import { STATUS } from '../../lib/flood.js';
+import { serverNow } from '../../lib/serverTime.js';
 
 // Sensor status -> design-system tone. Every status is shown as icon + word + colour.
 export const TONE = {
@@ -35,7 +36,7 @@ export function StatusChip({ status, tone = toneOf(status), label, icon = true, 
   );
 }
 
-export function timeAgo(ts, now = Date.now()) {
+export function timeAgo(ts, now = serverNow()) {
   const s = Math.max(0, Math.round((now - ts) / 1000));
   if (s < 60) return `${s} s ago`;
   if (s < 3600) return `${Math.round(s / 60)} min ago`;

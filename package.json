@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Dev scripts: seed sample data and simulate sensors until the ESP8266 hardware exists.",
+  "description": "Dev scripts: seed sample data and simulate sensors until the ESP32 hardware exists.",
   "scripts": {
     "seed": "node scripts/seed.mjs",
     "make-admin": "node scripts/make-admin.mjs",

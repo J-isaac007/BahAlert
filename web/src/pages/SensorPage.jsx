@@ -93,6 +93,7 @@ export default function SensorPage() {
   }
 
   const level = sensor.live?.levelCm;
+  const levelLabel = sensor.live && !sensor.online ? 'Last known level' : 'Water level';
   // Offline: the last readings are stale, so no rate or overflow estimate (same as the map popup)
   const liveRate = sensor.online ? rate : null;
   const eta = sensor.online ? minutesToOverflow(level, rate, sensor.config.dangerCm) : { kind: 'unknown', minutes: null };
@@ -131,7 +132,7 @@ export default function SensorPage() {
           <div className="gauge-card fw-rise fw-d1">
             <WaterGauge levelCm={level} status={sensor.status} config={sensor.config} showScale scaleClassName="only-mobile" />
             <div className="gauge-card__info only-desktop">
-              <span className="fw-over">Water level</span>
+              <span className="fw-over">{levelLabel}</span>
               <span className="fw-num">{Number.isFinite(level) ? `${Math.round(level)} cm` : '—'}</span>
               {gaugeLines(sensor.config).map((l) => (
                 <span key={l.label} style={{ color: l.color }}>
@@ -140,7 +141,7 @@ export default function SensorPage() {
               ))}
             </div>
             <div className="only-mobile" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
-              <span className="fw-over">Water level</span>
+              <span className="fw-over">{levelLabel}</span>
               <span className="fw-num">{Number.isFinite(level) ? `${Math.round(level)} cm` : '—'}</span>
               <span>
                 <StatusChip status={sensor.status} />
