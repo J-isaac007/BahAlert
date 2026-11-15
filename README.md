@@ -42,6 +42,18 @@ npm test                    # flood + geo logic tests
 
 Test danger alerts: Chrome DevTools → ⋮ → More tools → Sensors → set a location inside a red circle.
 
+### Run the simulator on GitHub (for the live site)
+
+The live site only shows moving sensors while a simulator is running somewhere. To run it on GitHub instead
+of a laptop:
+
+1. One time: repo Settings → Secrets and variables → Actions → New secret `FIREBASE_SERVICE_ACCOUNT`, and
+   paste the whole contents of `serviceAccount.json`. (It uses the existing `VITE_FIREBASE_DATABASE_URL` secret.)
+2. **Start:** Actions → *Sensor simulator* → Run workflow → mode `start`, pick minutes (max 350).
+3. **Stop:** run it again with mode `stop`, or cancel the running job. Sensors show offline within 60 s.
+
+Don't run it on GitHub and on a laptop at the same time — both would write to the same sensors.
+
 ### Local emulator instead of real Firebase
 
 ```bash
