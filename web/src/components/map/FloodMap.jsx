@@ -80,7 +80,7 @@ const FloodMap = forwardRef(function FloodMap(
         safeZones={safeZones}
         visible={overlays.safeZones}
         selectedId={selected?.kind === 'zone' ? selected.id : null}
-        targetId={routeResult?.zone.id}
+        targetId={routeResult?.route ? routeResult.zone.id : undefined}
         onSelect={onSelect}
       />
       <SensorLayer

@@ -47,6 +47,59 @@ export function dangerPolygons(sensors) {
   return sensors.filter((s) => s.status === STATUS.RED).map(zoneCircle);
 }
 
+// Red zones a route must stay out of. A zone the user is already standing in is left out:
+// the route has to cross it to get them out.
+export function avoidZones(user, sensors) {
+  return sensors.filter((s) => s.status === STATUS.RED && !(user && distanceM(user, [s.lng, s.lat]) <= s.radiusM));
+}
+
+// Red zones a route line passes through, nearest to the start of the route first.
+export function crossedZones(lineGeometry, zones) {
+  const start = lineGeometry.coordinates[0];
+  return zones
+    .filter((z) => booleanIntersects(lineGeometry, zoneCircle(z)))
+    .sort((a, b) => distanceM(start, [a.lng, a.lat]) - distanceM(start, [b.lng, b.lat]));
+}
+
+const EARTH_M = 6_371_008.8;
+const rad = (d) => (d * Math.PI) / 180;
+const deg = (r) => (r * 180) / Math.PI;
+
+// Compass bearing from a to b, degrees clockwise from north.
+export function bearingDeg([lng1, lat1], [lng2, lat2]) {
+  const dl = rad(lng2 - lng1);
+  const y = Math.sin(dl) * Math.cos(rad(lat2));
+  const x = Math.cos(rad(lat1)) * Math.sin(rad(lat2)) - Math.sin(rad(lat1)) * Math.cos(rad(lat2)) * Math.cos(dl);
+  return (deg(Math.atan2(y, x)) + 360) % 360;
+}
+
+// The point `meters` away from `from` along `bearing`.
+export function offsetPoint([lng, lat], bearing, meters) {
+  const d = meters / EARTH_M;
+  const b = rad(bearing);
+  const la1 = rad(lat);
+  const la2 = Math.asin(Math.sin(la1) * Math.cos(d) + Math.cos(la1) * Math.sin(d) * Math.cos(b));
+  const lo2 = rad(lng) + Math.atan2(Math.sin(b) * Math.sin(d) * Math.cos(la1), Math.cos(d) - Math.sin(la1) * Math.sin(la2));
+  return [deg(lo2), deg(la2)];
+}
+
+// Distance from the edge of the red circle to the detour points.
+export const detourRadiusM = (zone) => zone.radiusM * 1.3 + 60;
+
+// Points that steer a route around one red circle. travelBearing = the overall direction of the trip.
+// side: 1 = pass on the right, -1 = on the left. 'tight' = one point beside the circle;
+// 'wide' = three points wrapping it (behind, beside, ahead), so the road between them can't cut the corner.
+// scale > 1 swings further out, for when the nearest roads around still funnel back through the zone (a bridge).
+export function detourVias(zone, travelBearing, side, shape = 'tight', scale = 1) {
+  const angles = shape === 'tight' ? [90] : [135, 90, 45];
+  return angles.map((a) => offsetPoint([zone.lng, zone.lat], travelBearing + side * a, detourRadiusM(zone) * scale));
+}
+
+// How far along the trip from `from` (in `bearing`) a point sits, in meters. Orders detours by the zone they go around.
+export function alongM(from, bearing, point) {
+  return distanceM(from, point) * Math.cos(rad(bearingDeg(from, point) - bearing));
+}
+
 // Closest usable safe zones by straight line. Skips inactive zones and zones inside a red circle.
 export function nearestCandidates(user, safeZones, sensors, n = 5) {
   return safeZones

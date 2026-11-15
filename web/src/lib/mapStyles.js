@@ -35,7 +35,6 @@ export const STATUS_COLORS = {
 export const SAFE_ZONE_COLOR = '#2dd4bf';
 export const ROUTE_COLOR = '#8be3f7';
 export const CANVAS_COLOR = '#05090d';
-export const DANGER_TEXT_COLOR = '#fca5a5';
 
 export const statusColorExpr = [
   'match',

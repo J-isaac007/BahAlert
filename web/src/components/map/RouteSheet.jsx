@@ -1,5 +1,13 @@
 import { Car, ChevronLeft, CircleCheck, Clock, Footprints, LoaderCircle, Navigation, Phone, TriangleAlert, X } from 'lucide-react';
+import { Link } from 'react-router';
 import { km, minutes, zoneSummary } from '../../lib/zones.js';
+
+// Shown instead of a route: we never send people through a red zone.
+const NO_ROUTE = {
+  blocked:
+    'Every road we found to a safe zone passes through a flooded area, so we are not showing a route. Stay on high ground, away from the water, and call for help.',
+  zoneFlooded: 'This safe zone is inside a flooded area right now. Pick another safe zone, or call for help.',
+};
 
 const PROFILES = [
   ['walking', 'Walk', Footprints],
@@ -11,31 +19,28 @@ export default function RouteSheet({ result, loading, error, profile, onProfileC
   if (!result && !loading && !error) return null;
   const panel = variant === 'panel';
 
-  const title = loading && !result ? 'Finding a safe route…' : result ? result.zone.name : 'No route found';
+  const route = result?.route;
+  let title = 'No route found';
+  if (loading && !result) title = 'Finding a safe route…';
+  else if (route) title = result.zone.name;
+  else if (result) title = 'No flood-free route';
 
   const body = (
     <>
-      {result && (
+      {route && (
         <div className="fw-sheet__summary">
           <span>
             <Clock size={18} aria-hidden="true" />
-            {minutes(result.route.durationS)}
+            {minutes(route.durationS)}
           </span>
           <span>
             <Navigation size={18} aria-hidden="true" />
-            {km(result.route.distanceM)}
+            {km(route.distanceM)}
           </span>
-          {result.safe ? (
-            <span className="fw-chip fw-chip--normal" style={{ marginLeft: 'auto' }}>
-              <CircleCheck size={16} aria-hidden="true" />
-              Avoids floods
-            </span>
-          ) : (
-            <span className="fw-chip fw-chip--danger" style={{ marginLeft: 'auto' }}>
-              <TriangleAlert size={16} aria-hidden="true" />
-              Passes flooding
-            </span>
-          )}
+          <span className="fw-chip fw-chip--normal" style={{ marginLeft: 'auto' }}>
+            <CircleCheck size={16} aria-hidden="true" />
+            Avoids floods
+          </span>
         </div>
       )}
 
@@ -55,16 +60,22 @@ export default function RouteSheet({ result, loading, error, profile, onProfileC
         </div>
       )}
 
-      {result && !result.safe && (
-        <div className="fw-warnrow">
-          <TriangleAlert size={18} aria-hidden="true" style={{ flex: 'none' }} />
-          Every route we found passes a flooded area. Go with care, or call for help.
-        </div>
+      {result && !route && (
+        <>
+          <div className="fw-warnrow" role="alert">
+            <TriangleAlert size={18} aria-hidden="true" style={{ flex: 'none' }} />
+            {NO_ROUTE[result.reason] ?? NO_ROUTE.blocked}
+          </div>
+          <Link className="fw-btn fw-btn--secondary" to="/hotlines" style={{ alignSelf: 'flex-start' }}>
+            <Phone size={20} aria-hidden="true" />
+            Call for help
+          </Link>
+        </>
       )}
 
-      {result && (
+      {route && (
         <ol className="fw-steps">
-          {result.route.steps.map((s, i) => (
+          {route.steps.map((s, i) => (
             <li key={i}>
               <span>{s.instruction}</span>
               <span>{km(s.distanceM)}</span>
@@ -73,7 +84,7 @@ export default function RouteSheet({ result, loading, error, profile, onProfileC
         </ol>
       )}
 
-      {panel && result?.zone.contact && (
+      {panel && route && result.zone.contact && (
         <a className="fw-btn fw-btn--secondary" href={`tel:${result.zone.contact}`}>
           <Phone size={20} aria-hidden="true" />
           Call {result.zone.name}
@@ -95,7 +106,7 @@ export default function RouteSheet({ result, loading, error, profile, onProfileC
             {loading && <LoaderCircle size={22} className="fw-spin" aria-hidden="true" />}
             {title}
           </h2>
-          {result && <p className="fw-body-s" style={{ marginTop: 4 }}>{zoneSummary(result.zone)}</p>}
+          {route && <p className="fw-body-s" style={{ marginTop: 4 }}>{zoneSummary(result.zone)}</p>}
         </div>
         {body}
       </div>
