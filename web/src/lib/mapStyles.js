@@ -23,7 +23,7 @@ export const OVERLAYS = {
 export const DEFAULT_OVERLAYS = { flood: true, safeZones: true, heatmap: false, route: true };
 
 // Alangilan–Balagtas, Batangas City (where the sample sensors sit).
-export const DEFAULT_VIEW = { longitude: 121.0705, latitude: 13.7900, zoom: 14.5 };
+export const DEFAULT_VIEW = { longitude: 121.0600, latitude: 13.7720, zoom: 13.5 };
 
 export const STATUS_COLORS = {
   green: '#4ade80',
