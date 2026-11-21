@@ -28,10 +28,7 @@ const zone = (name, type, lat, lng, address) => ({ name, type, lat, lng, capacit
 export const SAFE_ZONES = {
   'sz-001': zone('Alangilan Elementary School', 'school', 13.7877, 121.0688, 'National Highway, Alangilan'),
   'sz-002': zone('Batangas State University - Alangilan Campus (Main II)', 'school', 13.7843, 121.0743, 'Golden Country Village, Alangilan'),
-  // TODO: not on OpenStreetMap — approximate pin in Alangilan, move to the real clubhouse
-  'sz-003': zone('Alangilan Clubhouse', 'evac', 13.7910, 121.0715, 'Alangilan'),
   'sz-004': zone('Kumintang Ilaya Covered Court', 'court', 13.7739, 121.0645, 'R. Diokno Street, Kumintang Ilaya'),
-  // TODO: pinned at the 401st Ready Reserve Infantry Battalion HQ (Hilltop) — confirm it's the same site
   'sz-005': zone('401st Community Defense Center', 'evac', 13.7647, 121.0615, 'Hilltop Road, Kumintang Ibaba'),
   'sz-006': zone('Batangas City Evacuation Center', 'evac', 13.7696, 121.0531, 'National Highway, Bolbok'),
   'sz-007': zone('Batangas Provincial Sports Complex', 'evac', 13.7777, 121.0450, 'Taurus Street, Bolbok'),
