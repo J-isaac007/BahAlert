@@ -2,14 +2,12 @@
 
 Source of truth for the website's look and behaviour. Page-specific rules can go in `pages/<page>.md` and override this file.
 
-- **Claude Design system** (tokens, 17 components, icons, brand book — Dark + Light): https://claude.ai/artifact/DhyT8Lm4tzVcFmWanVpKiE
-- **Claude Design screens** (19 artboards, mobile 390 + desktop 1440): https://claude.ai/artifact/4p9L4PFryaLLLkgBjfMrXK
-- Figma (Dark-only copy of the Claude Design system — all tokens + 27 components on "Design System", all 19 screens on "Screens", built from component instances, 2026-10-22):
+- Figma (dark design system — all tokens + 27 components on "Design System", all 19 screens on "Screens", built from component instances, 2026-10-22):
   [FlootWatch-design](https://www.figma.com/design/RxQHYzvJHcAOOm2lEXvVHJ/FlootWatch-design)
 
 > **Rebranded to BahAlert (2026-10-24)** from the team's Canva deck "BahAlert" (design `DAHYwgBpCJQ`).
 > This supersedes the palette, type and "no gradients, no glass" style below; principles, layout, touch,
-> status rules and the map stay. The Claude Design brand book (`project/README.md`) is the current reference.
+> status rules and the map stay. The Figma file is the current reference.
 > - Name **BahAlert**; tagline "Minutes matter. We give communities those minutes."; built by team Limang Piso, CS Bootcamp 2026.
 > - Logo: orb of flood bands, vector-traced (`web/public/icon.svg`, `web/src/components/ui/Logo.jsx`, Figma `Logo` set, DS `Logos` assets).
 > - Palette: canvas #05090D, surface #0B151D, raised #10202B, accent #44C2F4 (logo sky), hover #8BE3F7,
@@ -19,7 +17,7 @@ Source of truth for the website's look and behaviour. Page-specific rules can go
 >   teal silk wave backdrop (`web/public/waves.svg`) on login and About only.
 > - Code `border-strong` is #4A7290 (3:1 on surface); Figma `abyss/500` is still #3D6178 — update when the Figma quota allows.
 >
-> The Claude Design system supersedes a few dark values below for contrast. Token names there are flat (`bg-canvas`,
+> The design system supersedes a few dark values below for contrast. Token names there are flat (`bg-canvas`,
 > `status-danger-text`, …) and match the CSS custom properties the website should use.
 
 ---

@@ -12,3 +12,7 @@ graphify-out/
 serviceAccount*.json
 firmware/**/secrets.h
 .playwright-mcp/
+# local AI tooling
+.claude/
+.agents/
+skills-lock.json

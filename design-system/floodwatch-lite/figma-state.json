@@ -1,7 +1,7 @@
 {
  "runId": "floodwatch-ds-2026-10-22",
  "fileKey": "RxQHYzvJHcAOOm2lEXvVHJ",
- "scope": "full-library rebuilt from Claude Design artifact DhyT8Lm4tzVcFmWanVpKiE (dark only); screens not yet in Figma",
+ "scope": "full-library rebuilt from the web design system (dark only); screens not yet in Figma",
  "decisions": {
   "palette": [
    "#1D3E53",
