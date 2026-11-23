@@ -42,13 +42,12 @@ export const SAFE_ZONES = {
 //   PAGASA: pagasa.dost.gov.ph ("New PAGASA Trunk Line Number")
 //   Batangas City: batangascity.gov.ph/web/about-the-city/general-information/emergency-numbers (updated 19 May 2026)
 //     CDRRMO and BFP also match the CDRRMO profile page; police uses the newer emergency-numbers page.
-// Still unverified: ndrrmc.gov.ph blocks automated reading, and no official barangay hall number was found.
+// NDRRMC removed (its site could not be checked; residents call 911 or the CDRRMO). No official barangay hall number found yet.
 // Fire and police use the Batangas City stations (keys hl-bfp / hl-pnp kept so re-seeding overwrites them).
 export const HOTLINES = {
   'hl-911': { name: 'National Emergency Hotline', number: '911', category: 'national', area: 'Philippines', order: 1, verified: true },
   'hl-prc': { name: 'Philippine Red Cross', number: '143', category: 'national', area: 'Philippines', order: 2, verified: true },
   'hl-pagasa': { name: 'PAGASA (weather)', number: '(02) 8284-0800', category: 'national', area: 'Philippines', order: 3, verified: true },
-  'hl-ndrrmc': { name: 'NDRRMC Operations Center', number: '', category: 'national', area: 'Philippines', order: 4, verified: false },
   'hl-cdrrmo': { name: 'City DRRM Office (CDRRMO)', number: '(043) 702-3902', category: 'city', area: 'Batangas City', order: 1, verified: true },
   'hl-bc247': { name: '24/7 Emergency Health Hotline', number: '0999 222 6626', category: 'city', area: 'Batangas City', order: 2, verified: true },
   'hl-bfp': { name: 'Fire Station (BFP Batangas City)', number: '(043) 425-7163', category: 'city', area: 'Batangas City', order: 3, verified: true },

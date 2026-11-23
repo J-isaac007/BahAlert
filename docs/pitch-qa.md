@@ -142,7 +142,7 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Each hotline has a `verified` flag; unverified numbers hide the call button. The national lines (911, Red Cross 143,
     PAGASA) and the Batangas City lines (CDRRMO, 24/7 health hotline, fire, police, Batangas Medical Center) were checked
     on the agencies' and the city's official websites on 23 Nov 2026.
-    ⚠ NDRRMC and the barangay hall are still unverified, so they show without a call button.
+    ⚠ The barangay hall is still unverified, so it shows without a call button.
 
 ## H. Sustainability & future
 
@@ -165,4 +165,4 @@ Likely panelist questions about the software, each with a short answer drawn fro
 
 - Close every ⚠ answer with the planned fix — panels reward knowing your limits.
 - Keep the simulator running during the demo so statuses change live.
-- Before the pitch, verify the NDRRMC and barangay hall numbers — panelists may open the site.
+- Before the pitch, verify the barangay hall number — panelists may open the site.
