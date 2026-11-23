@@ -89,13 +89,16 @@ export default function About() {
           </section>
 
           <section className="fw-rise fw-d3" style={{ gap: 16 }}>
-            <h2 className="section-title">Sound tells us the water level</h2>
-            <p>An ultrasonic sensor above the channel sends a short pulse of sound down to the water and times the echo:</p>
-            <p className="about-formula">distance = (speed of sound × echo time) ÷ 2</p>
+            <h2 className="section-title">Radar tells us the water level</h2>
             <p>
-              We divide by 2 because the sound travels down and back. Warm air carries sound faster, so a small thermometer
-              corrects the speed: about 331.3 + 0.606 × temperature metres per second. The water level is the sensor&apos;s
-              height above the channel bed minus that distance.
+              A radar sensor mounted under a bridge or on a post above the channel sends a radio wave down to the water and
+              measures how long the reflection takes to come back:
+            </p>
+            <p className="about-formula">distance = (speed of light × travel time) ÷ 2</p>
+            <p>
+              We divide by 2 because the wave travels down and back. Radio waves are not slowed by heat, wind, rain or fog
+              the way sound is, so the reading stays steady in a storm and needs no temperature correction. The water level
+              is the sensor&apos;s height above the channel bed minus that distance.
             </p>
           </section>
 
@@ -132,16 +135,16 @@ export default function About() {
         </article>
 
         <aside className="about-aside">
-          <figure className="echo-fig fw-rise fw-d2" aria-label="An ultrasonic sensor above the channel times an echo off the water surface">
-            <div className="echo-fig__sensor">Ultrasonic sensor</div>
+          <figure className="echo-fig fw-rise fw-d2" aria-label="A radar sensor above the channel times a radio wave reflecting off the water surface">
+            <div className="echo-fig__sensor">Radar sensor</div>
             <div className="echo-fig__beam">
               <div className="echo-fig__line">
                 <span className="fw-echo" aria-hidden="true" />
               </div>
               <div className="echo-fig__note">
-                sound goes down
+                radio wave goes down
                 <br />
-                and echoes back
+                and reflects back
               </div>
             </div>
             <div className="echo-fig__water">Water surface</div>

@@ -21,8 +21,9 @@ Likely panelist questions about the software, each with a short answer drawn fro
 ## B. Architecture & tech stack
 
 5. **Walk us through the architecture.**
-   ESP32 → Firebase Realtime Database → React + Vite web app (Mapbox map, Chart.js). The sensor also sounds a
-   siren and texts via a 4G modem, independently of the internet.
+   Sensor unit (ESP32 + radar) → 4G → Firebase Realtime Database → React + Vite web app (Mapbox map, Chart.js).
+   The sensor also texts residents via its 4G modem and sends alerts over LoRa radio to a separate announcer
+   unit (LED display + siren), so the local warning works without internet or cell signal.
 6. **Why Firebase Realtime Database instead of SQL / your own server?**
    Live push to every browser with no backend to run, free tier, built-in auth and security rules,
    Asia-Southeast region.
@@ -37,8 +38,13 @@ Likely panelist questions about the software, each with a short answer drawn fro
 ## C. Flood logic & algorithms
 
 10. **How do you measure water level?**
-    Ultrasonic echo: distance = speed of sound × echo time ÷ 2, with speed corrected by temperature
-    (331.3 + 0.606 × T m/s); level = sensor height − distance.
+    A 24 GHz non-contact radar sensor above the water: distance = speed of light × travel time ÷ 2;
+    level = sensor height − distance. The sensor works out the distance itself and sends it to the ESP32 over
+    RS485. (24 GHz level radars typically measure the tiny travel time indirectly, by comparing the frequency
+    sent with the frequency returned.)
+    **Why radar, not ultrasonic?** Radio waves aren't affected by air temperature, wind, rain, fog or foam, so
+    no thermometer correction is needed, and the range is up to 20 m.
+    ⚠ The firmware sketch is still the ultrasonic prototype — porting it to the radar sensor is in progress.
 11. **How is green / yellow / red decided?**
     `getStatus` in `web/src/lib/flood.js`: ≥ redCm → red, ≥ yellowCm → yellow, else green. Thresholds are
     per-sensor in `/devices/{id}/config` (firmware defaults: yellow 40, red 60, overflow 80 cm).
@@ -64,7 +70,7 @@ Likely panelist questions about the software, each with a short answer drawn fro
     hotlines. If you're already inside a red zone, the route may cross that one zone only, to get you out.
 17. **What if the APIs are down or there's no internet?**
     Matrix failure falls back to straight-line order; ORS is a second provider.
-    ⚠ Without internet the website can't route — that's why the siren and SMS live on the device.
+    ⚠ Without internet the website can't route — that's why SMS, the LoRa link and the siren live on the hardware.
 18. **How do you prevent SMS spam when water bobs on a threshold?**
     Texts only when the status *rises*, at most once per 10 min per status, retry after 30 s with no signal
     (`config.h`).
@@ -88,15 +94,20 @@ Likely panelist questions about the software, each with a short answer drawn fro
 ## E. Reliability, scale & cost
 
 23. **What happens when Wi-Fi or power fails during a typhoon?**
-    Siren + SMS work over 4G without Wi-Fi; solar panel + battery; the board falls back to the thresholds in
-    `config.h` until it reaches Firebase. Battery voltage is reported so admins see a dying unit.
+    SMS works over 4G without Wi-Fi, and the sensor reaches the announcer's siren and LED display over LoRa
+    even with no cell signal. Each unit has its own solar panel and LiFePO4 battery (12 Ah sensor, 50 Ah
+    announcer) with an INA219 battery monitor. The board falls back to the thresholds in `config.h` until it
+    reaches Firebase. Battery voltage is reported so admins see a dying unit.
 24. **How many sensors can it handle?**
     The map only listens to `/devices` (small). ⚠ Known limits we've already logged: 7-day charts need
     downsampling (~120k points), the all-sensors alerts view needs a limit, safe-zone markers need clustering
     past ~30. Firebase's free tier covers a barangay pilot.
 25. **What does it cost to run?**
-    Software: free tiers (Firebase, Mapbox, GitHub Pages). Recurring: SIM load for SMS.
-    ⚠ Fill in the hardware cost per sensor (About page still shows [COST]).
+    Software: free tiers (Firebase, Mapbox, GitHub Pages). Recurring: SIM load for SMS and 4G data.
+    Hardware (prototype estimate): ~$329 for the sensor unit + ~$620 for the announcer unit = ~$949 for one
+    complete system. The announcer costs more because of its 50 Ah battery, 100 W solar panel and six LED panels.
+    In batches of 50–100: about $200–250 (sensor) and $350–450 (announcer).
+    ⚠ These are USD online estimates — have a peso figure and local supplier prices ready.
 26. **How often does the sensor report?**
     Live status every ~2 s, history reading every ~5 s, config re-read every 60 s.
     ⚠ TODO: stream config so threshold changes apply instantly.
@@ -110,8 +121,8 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Unit tests for flood logic, geo logic and server time (`flood.test.js`, `geo.test.js`,
     `serverTime.test.js` — `npm test`). ⚠ No end-to-end or field tests yet.
 29. **How accurate is the sensor?**
-    ⚠ Not yet field-calibrated — plan: compare against a ruler. The JSN-SR04T has a 25 cm blind zone, so it
-    must be mounted ≥ 25 cm above the highest water.
+    ⚠ Not yet field-calibrated — plan: compare against a ruler. Like any level sensor, the radar has a
+    minimum range (blind zone) — check its datasheet and mount it at least that far above the highest water.
 30. **Did real residents test it?**
     ⚠ Be honest; describe the planned barangay pilot / usability test.
 
@@ -123,7 +134,8 @@ Likely panelist questions about the software, each with a short answer drawn fro
 32. **Filipino language support?**
     ⚠ Currently English — Filipino / Batangueño text is a clear next step.
 33. **How are people warned if the site isn't open?**
-    SMS + siren from the device. ⚠ No web push notifications yet; the in-browser alarm sound is a TODO.
+    SMS from the sensor unit, plus the siren and LED display on the announcer unit (alerted over LoRa).
+    ⚠ No web push notifications yet; the in-browser alarm sound is a TODO.
 34. **Are the hotlines trustworthy?**
     Each hotline has a `verified` flag; unverified numbers hide the call button.
     ⚠ Numbers are still being verified from official sources.
@@ -137,7 +149,8 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Push notifications, Filipino UI, hazard-map-based zones, device config form, chart downsampling, offline
     (PWA) map caching, PAGASA rainfall data for better ETAs.
 37. **How does it scale to other LGUs?**
-    Adding a sensor = one database entry + one board; the site needs no code change (README §4).
+    Adding a sensor = one database entry + one sensor unit (plus an announcer unit where people need to see
+    and hear warnings); the site needs no code change (README §4).
 38. **What was the biggest technical challenge?**
     Pick one honestly: sensor freshness (device clocks drift, so we use server timestamps), or routing around
     danger zones with free APIs.
@@ -148,4 +161,4 @@ Likely panelist questions about the software, each with a short answer drawn fro
 
 - Close every ⚠ answer with the planned fix — panels reward knowing your limits.
 - Keep the simulator running during the demo so statuses change live.
-- Before the pitch, fill the About page TODOs (team names, costs) and verify hotlines — panelists may open the site.
+- Before the pitch, fill the About page TODO (team names) and verify hotlines — panelists may open the site.
