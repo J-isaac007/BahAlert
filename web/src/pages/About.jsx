@@ -2,6 +2,11 @@ import { ChevronRight, Info, Lock, Megaphone, Radar } from 'lucide-react';
 import { Link } from 'react-router';
 import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
+import aifaPhoto from '../assets/team/aifa.jpg';
+import christianPhoto from '../assets/team/christian.jpg';
+import edzelPhoto from '../assets/team/edzel.jpg';
+import isaacPhoto from '../assets/team/isaac.jpg';
+import luanPhoto from '../assets/team/luan.jpg';
 
 // Production hardware: estimated single-unit parts prices in USD, from the Blueprint "Flood Warning System" parts list.
 // Parts shared by both units (cable glands, M3 screws) are split evenly. Each part: [short name, spec, cost].
@@ -39,11 +44,11 @@ const UNITS = [
 ];
 
 const TEAM = [
-  ['Edzel', 'Team lead, quality checker'],
-  ['Isaac', 'Full-stack developer'],
-  ['Luan', 'Hardware'],
-  ['Aifa', 'Product, pitcher'],
-  ['Christian', 'Paper, pitcher'],
+  ['Edzel', 'Team lead, quality checker', edzelPhoto],
+  ['Isaac', 'Full-stack developer', isaacPhoto],
+  ['Luan', 'Hardware', luanPhoto],
+  ['Aifa', 'Product, pitcher', aifaPhoto],
+  ['Christian', 'Paper, pitcher', christianPhoto],
 ];
 
 const usd = (n) => `~$${n.toFixed(2)}`;
@@ -237,11 +242,9 @@ export default function About() {
             </p>
           </div>
           <ul className="about-members">
-            {TEAM.map(([name, role]) => (
+            {TEAM.map(([name, role, photo]) => (
               <li key={name} className="about-member">
-                <span className="about-member__avatar" aria-hidden="true">
-                  {name[0]}
-                </span>
+                <img className="about-member__avatar" src={photo} alt="" width="48" height="48" loading="lazy" decoding="async" />
                 <span>
                   <span className="fw-strong">{name}</span>
                   <span className="fw-body-s">{role}</span>

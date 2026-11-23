@@ -250,7 +250,7 @@ h1, h2, h3, p { margin: 0; }
 .about-members { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-3); }
 .about-member { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3); border-radius: var(--radius-lg); background: var(--glass-highlight), var(--glass-fill); border: 1px solid var(--glass-stroke); }
 .about-member > span:last-child { display: flex; flex-direction: column; min-width: 0; }
-.about-member__avatar { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: var(--radius-full); background: var(--accent-subtle); color: var(--accent); font: 600 16px/24px var(--font-display); }
+.about-member__avatar { display: block; flex: none; width: 48px; height: 48px; border-radius: var(--radius-full); object-fit: cover; background: var(--accent-subtle); box-shadow: 0 0 0 2px var(--accent-subtle); }
 .more-nav a { font: 600 16px/24px var(--font-body); min-height: 56px; }
 @media (max-width: 1023.98px) {
   .about { gap: var(--space-8); }
