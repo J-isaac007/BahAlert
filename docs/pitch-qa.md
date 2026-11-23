@@ -44,7 +44,9 @@ Likely panelist questions about the software, each with a short answer drawn fro
     sent with the frequency returned.)
     **Why radar, not ultrasonic?** Radio waves aren't affected by air temperature, wind, rain, fog or foam, so
     no thermometer correction is needed, and the range is up to 20 m.
-    ⚠ The firmware sketch is still the ultrasonic prototype — porting it to the radar sensor is in progress.
+    **Why does the firmware use an ultrasonic sensor?** That's our low-cost test prototype for developing and
+    testing the software. The production design uses radar; it sends the same data, so the website doesn't change.
+    ⚠ Production firmware for the radar, LoRa link and announcer unit is still to be written.
 11. **How is green / yellow / red decided?**
     `getStatus` in `web/src/lib/flood.js`: ≥ redCm → red, ≥ yellowCm → yellow, else green. Thresholds are
     per-sensor in `/devices/{id}/config` (firmware defaults: yellow 40, red 60, overflow 80 cm).
@@ -104,7 +106,7 @@ Likely panelist questions about the software, each with a short answer drawn fro
     past ~30. Firebase's free tier covers a barangay pilot.
 25. **What does it cost to run?**
     Software: free tiers (Firebase, Mapbox, GitHub Pages). Recurring: SIM load for SMS and 4G data.
-    Hardware (prototype estimate): ~$329 for the sensor unit + ~$620 for the announcer unit = ~$949 for one
+    Production hardware (parts for a single system): ~$329 for the sensor unit + ~$620 for the announcer unit = ~$949 for one
     complete system. The announcer costs more because of its 50 Ah battery, 100 W solar panel and six LED panels.
     In batches of 50–100: about $200–250 (sensor) and $350–450 (announcer).
     ⚠ These are USD online estimates — have a peso figure and local supplier prices ready.

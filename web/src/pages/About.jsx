@@ -4,7 +4,7 @@ import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
 
 // TODO(M5): fill in team names.
-// Prototype BOM estimates in USD, from the Blueprint "Flood Warning System" parts list.
+// Production hardware: estimated single-unit parts prices in USD, from the Blueprint "Flood Warning System" parts list.
 // Parts shared by both units (cable glands, M3 screws) are split evenly.
 const UNITS = [
   {
@@ -184,8 +184,8 @@ export default function About() {
               </li>
             </ul>
             <p className="fw-caption" style={{ margin: 0 }}>
-              Prototype estimates in US dollars. Buying in batches of 50 to 100 should bring this to about $200–250 for
-              the sensor unit and $350–450 for the announcer.
+              Estimated parts prices in US dollars when buying for a single system. Buying in batches of 50 to 100
+              should bring this to about $200–250 for the sensor unit and $350–450 for the announcer.
             </p>
           </section>
         </aside>
