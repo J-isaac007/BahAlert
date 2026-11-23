@@ -15,8 +15,10 @@ and ESP32 in an IP65 enclosure. Full parts list and prices are on the About page
 
 | Unit | Main parts | Parts cost (single system) |
 |---|---|---|
-| Sensor | 24 GHz radar level sensor (RS485 via MAX485), SIM7672G 4G modem, RFM95W 915 MHz LoRa, 20 W panel, 12 Ah battery | ~$329 |
-| Announcer | Six P10 LED panels (3 × 2 grid, HUB12 via 74AHCT245), 12 V 110 dB siren + relay, RFM95W LoRa, 100 W panel, 50 Ah battery | ~$620 |
+| Sensor | 24 GHz radar level sensor (RS485 via MAX485), SIM7672G 4G modem, RFM95W 915 MHz LoRa, 20 W panel, 12 Ah battery | ~₱20,990 |
+| Announcer | Six P10 LED panels (3 × 2 grid, HUB12 via 74AHCT245), 12 V 110 dB siren + relay, RFM95W LoRa, 100 W panel, 50 Ah battery | ~₱39,600 |
+
+Converted from US dollar online prices at ₱63.85 per $1 (BSP, 23 Nov 2026).
 
 ### Test prototype
 

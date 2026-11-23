@@ -51,8 +51,11 @@ const TEAM = [
   ['Christian', 'Paper, pitcher', christianPhoto],
 ];
 
-const usd = (n) => `~$${n.toFixed(2)}`;
-const subtotal = (unit) => unit.parts.reduce((sum, [, , cost]) => sum + cost, 0);
+// Shown in pesos: converted at PHP_PER_USD, rounded to the nearest ₱10 per part; subtotals add the rounded parts.
+const PHP_PER_USD = 63.85; // BSP weighted average, 23 Nov 2026
+const toPhp = (usd) => Math.round((usd * PHP_PER_USD) / 10) * 10;
+const peso = (n) => `~₱${n.toLocaleString('en-PH')}`;
+const subtotal = (unit) => unit.parts.reduce((sum, [, , usd]) => sum + toPhp(usd), 0);
 const TOTAL = UNITS.reduce((sum, unit) => sum + subtotal(unit), 0);
 
 const COLOURS = [
@@ -165,7 +168,7 @@ export default function About() {
           <section className="about-cost fw-rise fw-d3" aria-labelledby="about-cost-title">
             <h2 className="fw-over" id="about-cost-title">Cost per system</h2>
             <div>
-              <p className="fw-num">{usd(TOTAL)}</p>
+              <p className="fw-num">{peso(TOTAL)}</p>
               <p className="fw-caption">One sensor unit and one announcer unit, at single-unit prices</p>
             </div>
             <div className="about-cost__bar" aria-hidden="true">
@@ -178,13 +181,14 @@ export default function About() {
                 <li key={unit.name}>
                   <span className="about-cost__dot" style={{ background: unit.colour }} aria-hidden="true" />
                   <span>{unit.name}</span>
-                  <span>{usd(subtotal(unit))}</span>
+                  <span>{peso(subtotal(unit))}</span>
                 </li>
               ))}
             </ul>
             <hr />
             <p className="fw-caption">
-              Bought in batches of 50 to 100, a sensor unit drops to about $200–250 and an announcer to about $350–450.
+              Bought in batches of 50 to 100, a sensor unit drops to about ₱13,000–16,000 and an announcer to about
+              ₱22,000–29,000. Converted from US dollar prices at ₱63.85 per $1 (BSP, 23 Nov 2026).
             </p>
           </section>
         </aside>
@@ -213,7 +217,7 @@ export default function About() {
                       <p className="fw-caption">{unit.note}</p>
                     </div>
                     <p className="about-unit__subtotal">
-                      <span className="fw-h3">{usd(subtotal(unit))}</span>
+                      <span className="fw-h3">{peso(subtotal(unit))}</span>
                       <span className="fw-caption">subtotal</span>
                     </p>
                   </header>
@@ -224,7 +228,7 @@ export default function About() {
                           <span className="fw-strong">{part}</span>
                           <span className="fw-body-s">{spec}</span>
                         </div>
-                        <span className="about-parts__price">{usd(cost)}</span>
+                        <span className="about-parts__price">{peso(toPhp(cost))}</span>
                       </li>
                     ))}
                   </ul>

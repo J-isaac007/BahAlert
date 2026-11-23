@@ -37,14 +37,22 @@ export const SAFE_ZONES = {
   'sz-010': zone('Batangas City East Elementary School', 'school', 13.7601, 121.0642, 'P. Herrera Street, Kumintang Ibaba'),
 };
 
-// TODO(M5): verify every number from official sources, fill blanks, then set verified: true.
+// Only set verified: true after checking the number on the office's own official site.
+// Checked 2026-11-23:
+//   PAGASA: pagasa.dost.gov.ph ("New PAGASA Trunk Line Number")
+//   Batangas City: batangascity.gov.ph/web/about-the-city/general-information/emergency-numbers (updated 19 May 2026)
+//     CDRRMO and BFP also match the CDRRMO profile page; police uses the newer emergency-numbers page.
+// Still unverified: ndrrmc.gov.ph blocks automated reading, and no official barangay hall number was found.
+// Fire and police use the Batangas City stations (keys hl-bfp / hl-pnp kept so re-seeding overwrites them).
 export const HOTLINES = {
   'hl-911': { name: 'National Emergency Hotline', number: '911', category: 'national', area: 'Philippines', order: 1, verified: true },
   'hl-prc': { name: 'Philippine Red Cross', number: '143', category: 'national', area: 'Philippines', order: 2, verified: true },
-  'hl-ndrrmc': { name: 'NDRRMC Operations Center', number: '', category: 'national', area: 'Philippines', order: 3, verified: false },
-  'hl-pagasa': { name: 'PAGASA', number: '', category: 'national', area: 'Philippines', order: 4, verified: false },
-  'hl-bfp': { name: 'Bureau of Fire Protection', number: '', category: 'national', area: 'Philippines', order: 5, verified: false },
-  'hl-pnp': { name: 'Philippine National Police', number: '', category: 'national', area: 'Philippines', order: 6, verified: false },
-  'hl-cdrrmo': { name: 'City DRRM Office (CDRRMO)', number: '', category: 'city', area: 'Your city', order: 1, verified: false },
+  'hl-pagasa': { name: 'PAGASA (weather)', number: '(02) 8284-0800', category: 'national', area: 'Philippines', order: 3, verified: true },
+  'hl-ndrrmc': { name: 'NDRRMC Operations Center', number: '', category: 'national', area: 'Philippines', order: 4, verified: false },
+  'hl-cdrrmo': { name: 'City DRRM Office (CDRRMO)', number: '(043) 702-3902', category: 'city', area: 'Batangas City', order: 1, verified: true },
+  'hl-bc247': { name: '24/7 Emergency Health Hotline', number: '0999 222 6626', category: 'city', area: 'Batangas City', order: 2, verified: true },
+  'hl-bfp': { name: 'Fire Station (BFP Batangas City)', number: '(043) 425-7163', category: 'city', area: 'Batangas City', order: 3, verified: true },
+  'hl-pnp': { name: 'Police Station (Batangas City)', number: '(043) 723-2030', category: 'city', area: 'Batangas City', order: 4, verified: true },
+  'hl-batmc': { name: 'Batangas Medical Center', number: '(043) 723-0911', category: 'city', area: 'Batangas City', order: 5, verified: true },
   'hl-brgy': { name: 'Barangay Hall / BDRRMC', number: '', category: 'barangay', area: 'Your barangay', order: 1, verified: false },
 };

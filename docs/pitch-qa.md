@@ -106,10 +106,10 @@ Likely panelist questions about the software, each with a short answer drawn fro
     past ~30. Firebase's free tier covers a barangay pilot.
 25. **What does it cost to run?**
     Software: free tiers (Firebase, Mapbox, GitHub Pages). Recurring: SIM load for SMS and 4G data.
-    Production hardware (parts for a single system): ~$329 for the sensor unit + ~$620 for the announcer unit = ~$949 for one
-    complete system. The announcer costs more because of its 50 Ah battery, 100 W solar panel and six LED panels.
-    In batches of 50–100: about $200–250 (sensor) and $350–450 (announcer).
-    ⚠ These are USD online estimates — have a peso figure and local supplier prices ready.
+    Production hardware (parts for a single system): ~₱20,990 for the sensor unit + ~₱39,600 for the announcer unit =
+    ~₱60,590 for one complete system. The announcer costs more because of its 50 Ah battery, 100 W solar panel and six
+    LED panels. In batches of 50–100: about ₱13,000–16,000 (sensor) and ₱22,000–29,000 (announcer).
+    ⚠ These are US dollar online prices converted at ₱63.85 per $1 (BSP, 23 Nov 2026) — have local supplier quotes ready.
 26. **How often does the sensor report?**
     Live status every ~2 s, history reading every ~5 s, config re-read every 60 s.
     ⚠ TODO: stream config so threshold changes apply instantly.
@@ -139,8 +139,10 @@ Likely panelist questions about the software, each with a short answer drawn fro
     SMS from the sensor unit, plus the siren and LED display on the announcer unit (alerted over LoRa).
     ⚠ No web push notifications yet; the in-browser alarm sound is a TODO.
 34. **Are the hotlines trustworthy?**
-    Each hotline has a `verified` flag; unverified numbers hide the call button.
-    ⚠ Numbers are still being verified from official sources.
+    Each hotline has a `verified` flag; unverified numbers hide the call button. The national lines (911, Red Cross 143,
+    PAGASA) and the Batangas City lines (CDRRMO, 24/7 health hotline, fire, police, Batangas Medical Center) were checked
+    on the agencies' and the city's official websites on 23 Nov 2026.
+    ⚠ NDRRMC and the barangay hall are still unverified, so they show without a call button.
 
 ## H. Sustainability & future
 
@@ -163,4 +165,4 @@ Likely panelist questions about the software, each with a short answer drawn fro
 
 - Close every ⚠ answer with the planned fix — panels reward knowing your limits.
 - Keep the simulator running during the demo so statuses change live.
-- Before the pitch, fill the About page TODO (team names) and verify hotlines — panelists may open the site.
+- Before the pitch, verify the NDRRMC and barangay hall numbers — panelists may open the site.
