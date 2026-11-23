@@ -3,15 +3,41 @@ import { Link } from 'react-router';
 import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
 
-// TODO(M5): fill in team names, final costs.
-const PARTS = [
-  'ESP32 DevKit (Wi-Fi, USB-C)',
-  'JSN-SR04T waterproof ultrasonic sensor',
-  'DS18B20 waterproof thermometer',
-  '12 V siren, relay, 3 LEDs',
-  'A7670 / SIM7600 4G modem (SMS)',
-  'Solar panel, charge controller, battery',
+// TODO(M5): fill in team names.
+// Production hardware: estimated single-unit parts prices in USD, from the Blueprint "Flood Warning System" parts list.
+// Parts shared by both units (cable glands, M3 screws) are split evenly.
+const UNITS = [
+  {
+    name: 'Sensor unit',
+    note: 'Mounted on a bridge or post above the channel',
+    parts: [
+      ['ESP32-WROOM-32D DevKitC', 8.5],
+      ['24 GHz radar level sensor (RS485) + MAX485 converter', 87.5],
+      ['SIM7672G 4G LTE modem', 32],
+      ['RFM95W 915 MHz LoRa radio + antenna', 14],
+      ['20 W solar panel, 10 A MPPT controller, 12 Ah LiFePO4 battery', 99],
+      ['INA219 battery monitor, 5 V buck converter', 8],
+      ['IP65 enclosure, pole and solar mounts, cable glands, screws, 3D-printed tray and radar bracket', 79.8],
+    ],
+  },
+  {
+    name: 'Announcer unit',
+    note: 'LED display and siren, placed where people can see and hear it',
+    parts: [
+      ['ESP32-WROOM-32D DevKitC', 8.5],
+      ['Six P10 outdoor LED panels (3 × 2, 960 × 320 mm) + HUB12 level shifter', 87],
+      ['12 V 110 dB IP65 siren + siren relay', 21],
+      ['RFM95W 915 MHz LoRa radio + antenna', 14],
+      ['100 W solar panel, 20 A MPPT controller, 50 Ah LiFePO4 battery', 252],
+      ['40 A 5 V buck converter, 40 A display power relay, INA219 battery monitor', 40.5],
+      ['2020 aluminium frame, IP65 enclosure, pole and solar mounts, cable glands, screws, 3D-printed tray', 197.4],
+    ],
+  },
 ];
+
+const usd = (n) => `~$${n.toFixed(2)}`;
+const subtotal = (unit) => unit.parts.reduce((sum, [, cost]) => sum + cost, 0);
+const TOTAL = UNITS.reduce((sum, unit) => sum + subtotal(unit), 0);
 
 const COLOURS = [
   [STATUS.GREEN, 'Water is at a safe level.'],
@@ -63,13 +89,16 @@ export default function About() {
           </section>
 
           <section className="fw-rise fw-d3" style={{ gap: 16 }}>
-            <h2 className="section-title">Sound tells us the water level</h2>
-            <p>An ultrasonic sensor above the channel sends a short pulse of sound down to the water and times the echo:</p>
-            <p className="about-formula">distance = (speed of sound × echo time) ÷ 2</p>
+            <h2 className="section-title">Radar tells us the water level</h2>
             <p>
-              We divide by 2 because the sound travels down and back. Warm air carries sound faster, so a small thermometer
-              corrects the speed: about 331.3 + 0.606 × temperature metres per second. The water level is the sensor&apos;s
-              height above the channel bed minus that distance.
+              A radar sensor mounted under a bridge or on a post above the channel sends a radio wave down to the water and
+              measures how long the reflection takes to come back:
+            </p>
+            <p className="about-formula">distance = (speed of light × travel time) ÷ 2</p>
+            <p>
+              We divide by 2 because the wave travels down and back. Radio waves are not slowed by heat, wind, rain or fog
+              the way sound is, so the reading stays steady in a storm and needs no temperature correction. The water level
+              is the sensor&apos;s height above the channel bed minus that distance.
             </p>
           </section>
 
@@ -106,16 +135,16 @@ export default function About() {
         </article>
 
         <aside className="about-aside">
-          <figure className="echo-fig fw-rise fw-d2" aria-label="An ultrasonic sensor above the channel times an echo off the water surface">
-            <div className="echo-fig__sensor">Ultrasonic sensor</div>
+          <figure className="echo-fig fw-rise fw-d2" aria-label="A radar sensor above the channel times a radio wave reflecting off the water surface">
+            <div className="echo-fig__sensor">Radar sensor</div>
             <div className="echo-fig__beam">
               <div className="echo-fig__line">
                 <span className="fw-echo" aria-hidden="true" />
               </div>
               <div className="echo-fig__note">
-                sound goes down
+                radio wave goes down
                 <br />
-                and echoes back
+                and reflects back
               </div>
             </div>
             <div className="echo-fig__water">Water surface</div>
@@ -125,19 +154,39 @@ export default function About() {
           </figure>
 
           <section className="panel fw-rise fw-d3" style={{ gap: 12 }}>
-            <h2 className="fw-h3">Hardware per sensor</h2>
+            <h2 className="fw-h3">Hardware and costs</h2>
+            <p className="fw-body-s">
+              Two separate solar-powered units. The sensor unit sends alerts over 4G and LoRa, so the announcer still
+              warns people nearby when there is no cell signal.
+            </p>
+            {UNITS.map((unit) => (
+              <div key={unit.name} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <h3 className="fw-strong" style={{ margin: 0 }}>{unit.name}</h3>
+                <span className="fw-caption">{unit.note}</span>
+                <ul className="parts">
+                  {unit.parts.map(([part, cost]) => (
+                    <li key={part}>
+                      <span>{part}</span>
+                      <span style={{ whiteSpace: 'nowrap' }}>{usd(cost)}</span>
+                    </li>
+                  ))}
+                  <li style={{ fontWeight: 600 }}>
+                    <span>{unit.name} subtotal</span>
+                    <span style={{ color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{usd(subtotal(unit))}</span>
+                  </li>
+                </ul>
+              </div>
+            ))}
             <ul className="parts">
-              {PARTS.map((p) => (
-                <li key={p}>
-                  <span>{p}</span>
-                  <span>[COST]</span>
-                </li>
-              ))}
               <li style={{ fontWeight: 600 }}>
-                <span>Total</span>
-                <span style={{ color: 'var(--text-primary)' }}>[TOTAL]</span>
+                <span>Total, one complete system</span>
+                <span style={{ color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{usd(TOTAL)}</span>
               </li>
             </ul>
+            <p className="fw-caption" style={{ margin: 0 }}>
+              Estimated parts prices in US dollars when buying for a single system. Buying in batches of 50 to 100
+              should bring this to about $200–250 for the sensor unit and $350–450 for the announcer.
+            </p>
           </section>
         </aside>
       </div>

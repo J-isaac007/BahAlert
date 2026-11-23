@@ -1,8 +1,29 @@
 # FloodWatch Lite
 
-Low-cost community flood monitor. ESP32 + JSN-SR04T sensors measure channel water levels, sound a siren and
-text residents by SMS (4G modem) when the water rises, push readings to Firebase, and a map-first website shows flooded areas, warns people inside danger zones, routes them to the
-nearest safe zone, and lists Philippine emergency hotlines.
+Low-cost community flood monitor. Solar-powered sensor units (ESP32 + 24 GHz radar level sensor) measure channel
+water levels, text residents by SMS (4G modem) when the water rises, and push readings to Firebase. A separate
+announcer unit (P10 LED display + siren) receives alerts from the sensor over LoRa radio, so it still warns people
+nearby with no cell signal. A map-first website shows flooded areas, warns people inside danger zones, routes them
+to the nearest safe zone, and lists Philippine emergency hotlines.
+
+## Hardware
+
+### Production design
+
+Two separate units with no cable between them, each with its own solar panel, MPPT controller, LiFePO4 battery
+and ESP32 in an IP65 enclosure. Full parts list and prices are on the About page (`web/src/pages/About.jsx`).
+
+| Unit | Main parts | Parts cost (single system) |
+|---|---|---|
+| Sensor | 24 GHz radar level sensor (RS485 via MAX485), SIM7672G 4G modem, RFM95W 915 MHz LoRa, 20 W panel, 12 Ah battery | ~$329 |
+| Announcer | Six P10 LED panels (3 × 2 grid, HUB12 via 74AHCT245), 12 V 110 dB siren + relay, RFM95W LoRa, 100 W panel, 50 Ah battery | ~$620 |
+
+### Test prototype
+
+`firmware/` runs the test prototype used to develop and test the software: a single board with a JSN-SR04T
+ultrasonic sensor, DS18B20 thermometer (corrects the speed of sound), siren and A7670/SIM7600 modem. It writes
+the same data shape (`docs/data-contract.md`) as the production units will, so the website works with either.
+Production firmware for the radar sensor (RS485), LoRa link and announcer unit is still to be written.
 
 ```
 firmware/   ESP32 sketch (skeleton — test when hardware arrives)
@@ -69,6 +90,8 @@ firebase deploy             # hosting + database rules
 ```
 
 ## 4. When the hardware is ready
+
+These steps are for the test prototype sketch (see Hardware → Test prototype).
 
 1. Create an Auth user for the board, put its UID at `/deviceAuth/<deviceId>`.
 2. Copy `firmware/floodwatch_esp32/secrets.example.h` → `secrets.h`, fill in (Wi-Fi, Firebase, SMS numbers).
