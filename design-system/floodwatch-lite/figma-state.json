@@ -278,7 +278,9 @@
    "Logo/Stacked L": "148:352",
    "Logo/Mark L": "148:299",
    "WaveBackdrop": "148:389",
-   "Logo in TopNav (instance)": "149:271"
+   "Logo in TopNav (instance)": "149:271",
+   "PartRow": "195:2366",
+   "TeamMember": "195:2371"
   },
   "done": [
    "tokens renamed/revalued + glass/brand vars",
@@ -289,7 +291,11 @@
    "glass on 18 card/nav/overlay variants; pill Buttons/IconButtons; danger banner glow",
    "TopNav uses Logo Horizontal S",
    "Screens: FloodWatch->BahAlert copy, real Rosario flood event + Limang Piso team copy, About tagline + OUR PURPOSE overline, Admin login desktop/mobile wave + logo + glass card, About desktop footer wave",
-   "Screens section fills -> bg/canvas"
+   "Screens section fills -> bg/canvas",
+   "2026-11-23 About synced to code: ESP32 parts list (6 rows, wrapping names) on desktop 71:2354 + new mobile Hardware panel 187:2372; copy fixes (331.3 + 0.606 formula, minutes-to-overflow, privacy, sound intro, Our purpose overline on desktop); flood-event cite on its own muted line; mobile frame 71:2115 resized to 3106 with BottomNav pinned; desktop 71:2246 hugs (1612); section 71:2114 grown to 3306, 72:2069 shifted down 914",
+   "2026-11-23 About synced to the LIVE site (radar build): 'Radar tells us the water level' copy + speed-of-light formula, Radar diagram labels, 'Hardware and costs' panel 71:2354 = intro + Sensor unit (7 parts, ~$328.80) + Announcer unit (7 parts, ~$620.40) + total ~$949.20 + bulk-price footnote; mobile panel 193:2424; mobile frame 4262, desktop 2042, section 71:2114 = 4462 (72:2069 shifted +1156)",
+   "2026-11-23 About redesign (long parts list): aside = Radar diagram + 'Cost per system' summary card 195:2377 (total, sensor/announcer split bar, batch note); new full-width 'Lower sections' 195:2395 under Main = 'Hardware and costs' 195:2396 (two glass unit cards 195:2401/195:2455 with icon chip, subtotal, PartRow instances: short name + spec line + price) + 'The team' moved here with 5 TeamMember cards; mobile = 'Hardware and costs' 195:2534 (summary + both unit cards) then team list at the end. New local components on Screens page right of the About section: PartRow 195:2366 (Name/Detail/Price), TeamMember 195:2371 (Initial/Name/Role). Frames: desktop 2573, mobile 5025, section 71:2114 = 5225.",
+   "2026-11-23 About redesign applied to code: web/src/pages/About.jsx (UNITS with short name + spec, TEAM, cost card in aside, about-lower section) + global.css (.about-cost/.about-unit/.about-parts/.about-members; old .parts removed)"
   ],
   "pending": [
    "About · Mobile 71:2115: content 71:2116 overflows frame; resize frame to content.y+content.height+24+80 and pin BottomNav 71:2202 to bottom; grow section 71:2114",

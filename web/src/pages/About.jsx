@@ -1,42 +1,53 @@
-import { ChevronRight, Info, Lock } from 'lucide-react';
+import { ChevronRight, Info, Lock, Megaphone, Radar } from 'lucide-react';
 import { Link } from 'react-router';
 import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
 
-// TODO(M5): fill in team names.
 // Production hardware: estimated single-unit parts prices in USD, from the Blueprint "Flood Warning System" parts list.
-// Parts shared by both units (cable glands, M3 screws) are split evenly.
+// Parts shared by both units (cable glands, M3 screws) are split evenly. Each part: [short name, spec, cost].
 const UNITS = [
   {
     name: 'Sensor unit',
     note: 'Mounted on a bridge or post above the channel',
+    icon: Radar,
+    colour: 'var(--accent)',
     parts: [
-      ['ESP32-WROOM-32D DevKitC', 8.5],
-      ['24 GHz radar level sensor (RS485) + MAX485 converter', 87.5],
-      ['SIM7672G 4G LTE modem', 32],
-      ['RFM95W 915 MHz LoRa radio + antenna', 14],
-      ['20 W solar panel, 10 A MPPT controller, 12 Ah LiFePO4 battery', 99],
-      ['INA219 battery monitor, 5 V buck converter', 8],
-      ['IP65 enclosure, pole and solar mounts, cable glands, screws, 3D-printed tray and radar bracket', 79.8],
+      ['Microcontroller', 'ESP32-WROOM-32D DevKitC', 8.5],
+      ['Radar level sensor', '24 GHz, RS485, with MAX485 converter', 87.5],
+      ['4G modem', 'SIM7672G LTE', 32],
+      ['LoRa radio', 'RFM95W 915 MHz with antenna', 14],
+      ['Solar power', '20 W panel, 10 A MPPT controller, 12 Ah LiFePO4 battery', 99],
+      ['Power monitoring', 'INA219 battery monitor, 5 V buck converter', 8],
+      ['Enclosure and mounts', 'IP65 box, pole and solar mounts, cable glands, screws, 3D-printed tray and radar bracket', 79.8],
     ],
   },
   {
     name: 'Announcer unit',
     note: 'LED display and siren, placed where people can see and hear it',
+    icon: Megaphone,
+    colour: 'var(--brand-azure)',
     parts: [
-      ['ESP32-WROOM-32D DevKitC', 8.5],
-      ['Six P10 outdoor LED panels (3 × 2, 960 × 320 mm) + HUB12 level shifter', 87],
-      ['12 V 110 dB IP65 siren + siren relay', 21],
-      ['RFM95W 915 MHz LoRa radio + antenna', 14],
-      ['100 W solar panel, 20 A MPPT controller, 50 Ah LiFePO4 battery', 252],
-      ['40 A 5 V buck converter, 40 A display power relay, INA219 battery monitor', 40.5],
-      ['2020 aluminium frame, IP65 enclosure, pole and solar mounts, cable glands, screws, 3D-printed tray', 197.4],
+      ['Microcontroller', 'ESP32-WROOM-32D DevKitC', 8.5],
+      ['LED display', 'Six P10 outdoor panels (3 × 2, 960 × 320 mm), HUB12 level shifter', 87],
+      ['Siren', '12 V, 110 dB, IP65, with relay', 21],
+      ['LoRa radio', 'RFM95W 915 MHz with antenna', 14],
+      ['Solar power', '100 W panel, 20 A MPPT controller, 50 Ah LiFePO4 battery', 252],
+      ['Power', '40 A 5 V buck converter, 40 A display relay, INA219 battery monitor', 40.5],
+      ['Frame and enclosure', '2020 aluminium frame, IP65 box, pole and solar mounts, cable glands, screws, 3D-printed tray', 197.4],
     ],
   },
 ];
 
+const TEAM = [
+  ['Edzel', 'Team lead, quality checker'],
+  ['Isaac', 'Full-stack developer'],
+  ['Luan', 'Hardware'],
+  ['Aifa', 'Product, pitcher'],
+  ['Christian', 'Paper, pitcher'],
+];
+
 const usd = (n) => `~$${n.toFixed(2)}`;
-const subtotal = (unit) => unit.parts.reduce((sum, [, cost]) => sum + cost, 0);
+const subtotal = (unit) => unit.parts.reduce((sum, [, , cost]) => sum + cost, 0);
 const TOTAL = UNITS.reduce((sum, unit) => sum + subtotal(unit), 0);
 
 const COLOURS = [
@@ -125,13 +136,6 @@ export default function About() {
             <h2 className="section-title">Your privacy</h2>
             <p>Your location is only used on your device to check danger zones and find a route. It is never sent to us or stored.</p>
           </section>
-
-          <section>
-            <h2 className="section-title">The team</h2>
-            <p style={{ color: 'var(--text-secondary)' }}>
-              Built by team Limang Piso for CS Bootcamp 2026 — Build the way forward. [TEAM MEMBERS AND ROLES]
-            </p>
-          </section>
         </article>
 
         <aside className="about-aside">
@@ -153,42 +157,99 @@ export default function About() {
             </figcaption>
           </figure>
 
-          <section className="panel fw-rise fw-d3" style={{ gap: 12 }}>
-            <h2 className="fw-h3">Hardware and costs</h2>
-            <p className="fw-body-s">
-              Two separate solar-powered units. The sensor unit sends alerts over 4G and LoRa, so the announcer still
-              warns people nearby when there is no cell signal.
-            </p>
-            {UNITS.map((unit) => (
-              <div key={unit.name} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <h3 className="fw-strong" style={{ margin: 0 }}>{unit.name}</h3>
-                <span className="fw-caption">{unit.note}</span>
-                <ul className="parts">
-                  {unit.parts.map(([part, cost]) => (
-                    <li key={part}>
-                      <span>{part}</span>
-                      <span style={{ whiteSpace: 'nowrap' }}>{usd(cost)}</span>
-                    </li>
-                  ))}
-                  <li style={{ fontWeight: 600 }}>
-                    <span>{unit.name} subtotal</span>
-                    <span style={{ color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{usd(subtotal(unit))}</span>
-                  </li>
-                </ul>
-              </div>
-            ))}
-            <ul className="parts">
-              <li style={{ fontWeight: 600 }}>
-                <span>Total, one complete system</span>
-                <span style={{ color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>{usd(TOTAL)}</span>
-              </li>
+          <section className="about-cost fw-rise fw-d3" aria-labelledby="about-cost-title">
+            <h2 className="fw-over" id="about-cost-title">Cost per system</h2>
+            <div>
+              <p className="fw-num">{usd(TOTAL)}</p>
+              <p className="fw-caption">One sensor unit and one announcer unit, at single-unit prices</p>
+            </div>
+            <div className="about-cost__bar" aria-hidden="true">
+              {UNITS.map((unit) => (
+                <span key={unit.name} style={{ flexGrow: subtotal(unit), background: unit.colour }} />
+              ))}
+            </div>
+            <ul className="about-cost__legend">
+              {UNITS.map((unit) => (
+                <li key={unit.name}>
+                  <span className="about-cost__dot" style={{ background: unit.colour }} aria-hidden="true" />
+                  <span>{unit.name}</span>
+                  <span>{usd(subtotal(unit))}</span>
+                </li>
+              ))}
             </ul>
-            <p className="fw-caption" style={{ margin: 0 }}>
-              Estimated parts prices in US dollars when buying for a single system. Buying in batches of 50 to 100
-              should bring this to about $200–250 for the sensor unit and $350–450 for the announcer.
+            <hr />
+            <p className="fw-caption">
+              Bought in batches of 50 to 100, a sensor unit drops to about $200–250 and an announcer to about $350–450.
             </p>
           </section>
         </aside>
+      </div>
+
+      <div className="about-lower">
+        <section className="fw-rise" aria-labelledby="about-hw-title">
+          <div className="about-lower__intro">
+            <h2 className="section-title" id="about-hw-title">Hardware and costs</h2>
+            <p>
+              Two separate solar-powered units. The sensor unit sends alerts over 4G and LoRa, so the announcer still
+              warns people nearby when there is no cell signal.
+            </p>
+          </div>
+          <div className="about-units">
+            {UNITS.map((unit) => {
+              const Icon = unit.icon;
+              return (
+                <section key={unit.name} className="about-unit" aria-label={unit.name}>
+                  <header className="about-unit__head">
+                    <span className="about-unit__icon" aria-hidden="true">
+                      <Icon size={20} />
+                    </span>
+                    <div className="about-unit__title">
+                      <h3 className="fw-h3">{unit.name}</h3>
+                      <p className="fw-caption">{unit.note}</p>
+                    </div>
+                    <p className="about-unit__subtotal">
+                      <span className="fw-h3">{usd(subtotal(unit))}</span>
+                      <span className="fw-caption">subtotal</span>
+                    </p>
+                  </header>
+                  <ul className="about-parts">
+                    {unit.parts.map(([part, spec, cost]) => (
+                      <li key={part}>
+                        <div>
+                          <span className="fw-strong">{part}</span>
+                          <span className="fw-body-s">{spec}</span>
+                        </div>
+                        <span className="about-parts__price">{usd(cost)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="fw-rise" aria-labelledby="about-team-title">
+          <div className="about-lower__intro">
+            <h2 className="section-title" id="about-team-title">The team</h2>
+            <p style={{ color: 'var(--text-secondary)' }}>
+              Built by team Limang Piso for CS Bootcamp 2026 — Build the way forward.
+            </p>
+          </div>
+          <ul className="about-members">
+            {TEAM.map(([name, role]) => (
+              <li key={name} className="about-member">
+                <span className="about-member__avatar" aria-hidden="true">
+                  {name[0]}
+                </span>
+                <span>
+                  <span className="fw-strong">{name}</span>
+                  <span className="fw-body-s">{role}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
     </div>
   );
