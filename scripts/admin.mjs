@@ -16,7 +16,9 @@ if (!databaseURL) {
 }
 
 const useEmulator = Boolean(process.env.FIREBASE_DATABASE_EMULATOR_HOST);
-const app = initializeApp(useEmulator ? { databaseURL, projectId: 'floodwatch-lite' } : { credential: applicationDefault(), databaseURL });
+// Emulator: same project id as .firebaserc / the web app, or Auth users land in a project the site can't see
+const projectId = process.env.GCLOUD_PROJECT || 'floodwatch-993ef';
+const app = initializeApp(useEmulator ? { databaseURL, projectId } : { credential: applicationDefault(), databaseURL });
 
 export const db = getDatabase(app);
 // Uses the Auth emulator when FIREBASE_AUTH_EMULATOR_HOST is set

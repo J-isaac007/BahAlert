@@ -5,6 +5,9 @@ import MapPicker from '../components/map/MapPicker.jsx';
 import { StatusChip } from '../components/ui/Status.jsx';
 import { useAdmins } from '../hooks/useAdmins.js';
 import { logout, useAuth } from '../hooks/useAuth.js';
+import { toList, useDbValue } from '../hooks/useDbValue.js';
+import { useAlertService } from '../hooks/useResident.js';
+import { maskPhone } from '../lib/phone.js';
 import { useHotlines } from '../hooks/useHotlines.js';
 import { useSafeZones } from '../hooks/useSafeZones.js';
 import { useSensors } from '../hooks/useSensors.js';
@@ -12,7 +15,7 @@ import { inviteAdmin, removeAdmin } from '../lib/admins.js';
 import { db } from '../lib/firebase.js';
 import { ZONE_TYPES, zoneSummary } from '../lib/zones.js';
 
-const TABS = { sensors: 'Sensors', zones: 'Safe zones', hotlines: 'Hotlines', admins: 'Admins' };
+const TABS = { sensors: 'Sensors', zones: 'Safe zones', hotlines: 'Hotlines', residents: 'Residents', admins: 'Admins' };
 
 export default function Admin() {
   const [tab, setTab] = useState('zones');
@@ -35,31 +38,114 @@ export default function Admin() {
       {tab === 'sensors' && <SensorsTab />}
       {tab === 'zones' && <SafeZonesTab />}
       {tab === 'hotlines' && <HotlinesTab />}
+      {tab === 'residents' && <ResidentsTab />}
       {tab === 'admins' && <AdminsTab />}
     </div>
   );
 }
 
-// TODO(M3): edit meta (name, barangay, pin, dangerRadiusM) and config thresholds; "calibrate empty channel"
-// button sets config.sensorHeightCm = live.distanceCm.
+function AdminSwitch({ checked, onChange, label, disabled }) {
+  return (
+    <button type="button" className="fw-switch" role="switch" aria-checked={checked} aria-label={label} disabled={disabled} onClick={() => onChange(!checked)}>
+      <span className="fw-switch__thumb" />
+    </button>
+  );
+}
+
+// TODO(M3): edit meta (name, barangay, pin, dangerRadiusM) and config thresholds.
 function SensorsTab() {
   const { sensors } = useSensors();
+  const { data: settings } = useDbValue('settings/alerts');
+  const service = useAlertService();
+  const [error, setError] = useState(null);
+  const alertsOn = settings?.enabled !== false;
+
+  const run = (p) => p.catch((err) => setError(err.message));
+  const setNotify = (id, on) => run(update(ref(db, `devices/${id}/meta`), { notify: on }));
+  // Empty channel: whatever the sensor sees now is the bed, so water level reads 0
+  const calibrate = (s) => {
+    const d = s.live?.distanceCm;
+    if (!s.online || !Number.isFinite(d)) return;
+    if (!window.confirm(`Set ${s.name}'s height to ${d} cm? Only do this when the channel under it is empty (no water).`)) return;
+    run(update(ref(db, `devices/${s.id}/config`), { sensorHeightCm: d }));
+  };
+
   return (
-    <section className="admin-list fw-rise fw-d1" style={{ maxWidth: 720 }}>
-      <p className="notice">TODO: edit form. Pattern: copy SafeZonesTab, write to devices/{'{id}'}/meta and /config.</p>
+    <section className="admin-list fw-rise fw-d1" style={{ maxWidth: 760 }}>
+      <div className="admin-switch">
+        <div>
+          <div className="fw-strong">SMS and Telegram alerts</div>
+          <div className="fw-body-s">
+            {alertsOn ? 'On for the sensors switched on below.' : 'Paused: no resident gets a message.'}{' '}
+            Alert service {service.online ? 'online' : 'offline'}
+            {service.online && !service.sms ? ' (SMS in test mode)' : ''}.
+          </div>
+        </div>
+        <AdminSwitch checked={alertsOn} label="SMS and Telegram alerts" onChange={(on) => run(update(ref(db, 'settings/alerts'), { enabled: on }))} />
+      </div>
+      {error && <p className="notice notice--danger">{error}</p>}
       <div className="list-box">
         {sensors.map((s) => (
-          <div key={s.id} className="list-row">
+          <div key={s.id} className="list-row admin-sensor">
             <div className="list-row__body">
               <div className="fw-strong">{s.name}</div>
               <div className="fw-body-s">
-                {s.barangay} · danger radius {s.radiusM} m
+                {s.barangay} · height {s.config?.sensorHeightCm ?? '?'} cm · yellow {s.config?.yellowCm ?? '?'} / red {s.config?.redCm ?? '?'} cm
               </div>
             </div>
             <StatusChip status={s.status} />
+            <button type="button" className="fw-btn fw-btn--ghost" disabled={!s.online} onClick={() => calibrate(s)} title="Use when the channel is empty">
+              Calibrate
+            </button>
+            <AdminSwitch checked={s.notify} label={`Send alerts for ${s.name}`} onChange={(on) => setNotify(s.id, on)} />
           </div>
         ))}
       </div>
+      <p className="fw-caption">
+        The switch on each sensor sends SMS/Telegram alerts to residents watching it. Keep it off for simulated sensors.
+      </p>
+    </section>
+  );
+}
+
+function ResidentsTab() {
+  const { data, loading, error } = useDbValue('residents');
+  const { sensors } = useSensors();
+  const names = Object.fromEntries(sensors.map((s) => [s.id, s.name]));
+  const list = toList(data).sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
+  const count = (pred) => list.filter(pred).length;
+  return (
+    <section className="admin-list fw-rise fw-d1" style={{ maxWidth: 760 }}>
+      <p className="fw-body-s">
+        {list.length} resident{list.length === 1 ? '' : 's'} signed up · {count((r) => r.channels?.sms)} by SMS ·{' '}
+        {count((r) => r.channels?.telegram && r.telegramChatId)} on Telegram
+      </p>
+      {error && <p className="notice notice--danger">{error.message}</p>}
+      {loading ? (
+        <p className="loading">Loading…</p>
+      ) : list.length === 0 ? (
+        <p className="empty">No one has signed up yet. Residents sign up on the Alerts page.</p>
+      ) : (
+        <div className="list-box">
+          {list.map((r) => {
+            const watched = Object.keys(r.watch ?? {});
+            return (
+              <div key={r.id} className="list-row">
+                <div className="list-row__body" style={{ padding: '12px 0' }}>
+                  <div className="fw-strong">
+                    {r.name || 'No name yet'} · {maskPhone(r.phone)}
+                  </div>
+                  <div className="fw-body-s">
+                    {r.barangay || 'No barangay'} · {watched.length ? watched.map((id) => names[id] ?? id).join(', ') : 'no sensors picked'}
+                  </div>
+                </div>
+                {r.channels?.sms && <StatusChip tone="normal" label="SMS" />}
+                {r.channels?.telegram && r.telegramChatId && <StatusChip tone="normal" label="Telegram" />}
+              </div>
+            );
+          })}
+        </div>
+      )}
     </section>
   );
 }

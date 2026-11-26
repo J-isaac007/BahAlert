@@ -69,7 +69,8 @@ export default function Login() {
         <div className="fw-col" style={{ gap: 8 }}>
           <h1 className="page-title">Admin login</h1>
           <p style={{ color: 'var(--text-secondary)' }}>
-            For barangay DRRM officers who manage sensors, safe zones and hotlines. Residents do not need an account.
+            For barangay DRRM officers who manage sensors, safe zones and hotlines. Residents sign up for alerts with their
+            mobile number on the Alerts page instead.
           </p>
         </div>
         <form onSubmit={submit}>

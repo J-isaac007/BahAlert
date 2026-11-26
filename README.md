@@ -22,21 +22,28 @@ Converted from US dollar online prices at ₱63.85 per $1 (BSP, 23 Nov 2026).
 
 ### Test prototype
 
-`firmware/` runs the test prototype used to develop and test the software: a single board with a JSN-SR04T
-ultrasonic sensor, DS18B20 thermometer (corrects the speed of sound), siren and A7670/SIM7600 modem. It writes
-the same data shape (`docs/data-contract.md`) as the production units will, so the website works with either.
-Production firmware for the radar sensor (RS485), LoRa link and announcer unit is still to be written.
+The built prototype is two ESP32 boards that only need Wi-Fi (see `firmware/README.md`):
+
+- **Sensor unit** (`firmware/bahalert_sensor/`): JSN-SR04T ultrasonic sensor. Writes live data, readings and
+  alerts straight to Firebase as `bah-001`, in the same shape (`docs/data-contract.md`) the production units will use.
+- **Alarm unit** (`firmware/bahalert_alarm/`): 16×2 LCD, MAX98357A amp and speaker. Follows the sensor from
+  Firebase and shows/sounds NORMAL, LOW, MEDIUM, HIGH or SENSOR OFFLINE.
+
+Residents get SMS or Telegram alerts from the alert service (`service/`, see section 5). Production firmware
+for the radar sensor (RS485), LoRa link and announcer unit is still to be written.
 
 ```
-firmware/   ESP32 sketch (skeleton — test when hardware arrives)
+firmware/   ESP32 sketches: prototype sensor + alarm (and the older production skeleton)
+service/    alert service: sign-up codes, SMS (Android gateway) + Telegram alerts
 web/        React + Vite site (Mapbox map, Chart.js, Firebase)
-scripts/    seed sample data + simulate sensors (no hardware needed)
+scripts/    seed sample data, simulate sensors, register a board (add-device.mjs)
 docs/       data-contract.md — the Firebase shape everyone must follow
 ```
 
 ## 1. One-time setup
 
-1. **Firebase** — create project → enable *Realtime Database* (region: asia-southeast1) and *Authentication → Email/Password*.
+1. **Firebase** — create project → enable *Realtime Database* (region: asia-southeast1) and *Authentication →
+   Email/Password* and *Anonymous* (residents' sign-up uses it while their code is checked).
    Put the project id in `.firebaserc`.
 2. **Mapbox** — create account → copy the default public token (`pk.…`). Add URL restrictions
    (`http://localhost:5173`, your Firebase Hosting domain).
@@ -91,15 +98,33 @@ cd web && npm run build && cd ..
 firebase deploy             # hosting + database rules
 ```
 
-## 4. When the hardware is ready
+## 4. Connect the prototype hardware
 
-These steps are for the test prototype sketch (see Hardware → Test prototype).
+Full steps, wiring and thresholds: `firmware/README.md`. In short:
 
-1. Create an Auth user for the board, put its UID at `/deviceAuth/<deviceId>`.
-2. Copy `firmware/floodwatch_esp32/secrets.example.h` → `secrets.h`, fill in (Wi-Fi, Firebase, SMS numbers).
-   Wiring notes for every part are in `config.h`. Put a loaded SIM in the A7670/SIM7600 modem.
-3. Flash from Arduino IDE (board: *ESP32 Dev Module*; install the CP210x USB driver if no COM port shows up).
-   Stop the simulator. The website needs no change.
+1. `node scripts/add-device.mjs bah-001 "<name>" <barangay> <lat> <lng> --secrets firmware/bahalert_sensor/secrets.h`
+   makes the board's login, `/deviceAuth/bah-001`, desk-test thresholds and its `secrets.h`.
+2. Fill `firmware/bahalert_alarm/secrets.h` from its example.
+3. Flash both from Arduino IDE (board: *ESP32 Dev Module*). The website needs no change, and the simulator
+   doesn't touch `bah-001`.
+
+## 5. Resident alerts (SMS + Telegram)
+
+Residents sign up on the site (Alerts → *Sign up with your number*) with their mobile number and a texted code,
+pick the sensors near them, and choose SMS and/or Telegram. The alert service sends the codes and the alerts.
+
+1. **SMS:** on a spare Android phone with a loaded SIM, install *SMS Gateway for Android* (sms-gate.app), start
+   *Cloud server*, and copy the username and password it shows into the root `.env` as `SMS_GATEWAY_USER` and
+   `SMS_GATEWAY_PASS`. Keep the phone charged and online. Without them, SMS is a dry run that only logs.
+2. **Telegram:** create a bot with **@BotFather**, put the token in `.env` as `TELEGRAM_BOT_TOKEN`.
+3. Run the service and leave it running (laptop or an always-on machine; hosts that sleep when idle miss alerts):
+   ```bash
+   node service/index.mjs
+   ```
+4. Admin → Sensors: switch on alerts for the real sensors only (keep simulated ones off). The top switch pauses
+   all messages. Admin → Residents lists who signed up.
+
+Tests: `node --test service/messages.test.mjs` (message rules) and `cd web && npm test`.
 
 ## Team
 

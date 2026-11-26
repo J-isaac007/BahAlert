@@ -1,7 +1,8 @@
-import { Bell, Lock, LogOut, Map, Menu, Phone, Radio, ShieldCheck, WifiOff } from 'lucide-react';
+import { Bell, BellRing, Lock, LogOut, Map, Menu, Phone, Radio, ShieldCheck, WifiOff } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { logout, useAuth } from '../../hooks/useAuth.js';
 import { useSensors } from '../../hooks/useSensors.js';
+import { isResidentUid } from '../../lib/phone.js';
 import { LogoMark } from './Logo.jsx';
 
 // match: which paths light up the item (Map stays lit on /sensor/:id, More on about/login/admin)
@@ -10,7 +11,7 @@ const LINKS = [
   { to: '/safe-zones', label: 'Safe zones', icon: ShieldCheck },
   { to: '/hotlines', label: 'Hotlines', icon: Phone },
   { to: '/alerts', label: 'Alerts', icon: Bell },
-  { to: '/about', label: 'About', mobileLabel: 'More', icon: Menu, match: (p) => ['/about', '/login', '/admin'].includes(p) },
+  { to: '/about', label: 'About', mobileLabel: 'More', icon: Menu, match: (p) => ['/about', '/login', '/admin', '/account'].includes(p) },
 ];
 
 const isActive = (link, path) => (link.match ? link.match(path) : path.startsWith(link.to));
@@ -53,7 +54,13 @@ export function TopNav() {
         ))}
       </nav>
       <LiveChip />
-      {user ? (
+      {/* Residents (phone accounts) and anonymous sign-ups in progress don't get the admin controls */}
+      {isResidentUid(user?.uid) ? (
+        <Link to="/account" className="fw-topnav__admin" aria-current={pathname === '/account' ? 'page' : undefined}>
+          <BellRing size={18} aria-hidden="true" />
+          My alerts
+        </Link>
+      ) : user?.email ? (
         <>
           <span className="fw-caption topnav-email" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             {user.email}

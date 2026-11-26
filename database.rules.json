@@ -60,6 +60,70 @@
     },
     "deviceAuth": {
       ".read": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+    "settings": {
+      ".read": true,
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true"
+    },
+    "residents": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".indexOn": ["telegramChatId"],
+      "$rid": {
+        ".read": "auth != null && auth.uid === $rid",
+        ".write": "auth != null && auth.uid === $rid && !newData.exists()",
+        "name": {
+          ".write": "auth != null && auth.uid === $rid",
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 60"
+        },
+        "barangay": {
+          ".write": "auth != null && auth.uid === $rid",
+          ".validate": "newData.isString() && newData.val().length <= 60"
+        },
+        "watch": {
+          ".write": "auth != null && auth.uid === $rid",
+          "$deviceId": {
+            ".validate": "newData.val() === true && root.child('devices').child($deviceId).exists()"
+          }
+        },
+        "channels": {
+          ".write": "auth != null && auth.uid === $rid",
+          ".validate": "newData.hasChildren(['sms', 'telegram'])",
+          "sms": { ".validate": "newData.isBoolean()" },
+          "telegram": {
+            ".validate": "newData.isBoolean() && (newData.val() === false || newData.parent().parent().child('telegramChatId').exists())"
+          },
+          "$other": { ".validate": false }
+        },
+        "phone": {},
+        "telegramChatId": {},
+        "createdAt": {},
+        "$other": { ".validate": false }
+      }
+    },
+    "otpRequests": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid && !newData.exists()",
+        "phone": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.isString() && newData.val().matches(/^\\+639[0-9]{9}$/)"
+        },
+        "requestedAt": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.val() === now"
+        },
+        "code": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.isString() && newData.val().matches(/^[0-9]{6}$/)"
+        },
+        "$other": { ".validate": false }
+      }
+    },
+    "telegramLinks": {
+      "$code": {
+        ".write": "auth != null && !data.exists() && root.child('residents').child(auth.uid).exists()",
+        ".validate": "$code.matches(/^[A-Za-z0-9_-]{16,40}$/) && newData.hasChildren(['rid', 'ts']) && newData.child('rid').val() === auth.uid && newData.child('ts').val() === now"
+      }
     }
   }
 }

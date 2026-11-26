@@ -1,6 +1,9 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router';
+import { BellRing } from 'lucide-react';
 import AlertTable from '../components/alerts/AlertTable.jsx';
 import { useAlerts } from '../hooks/useAlerts.js';
+import { useResident } from '../hooks/useResident.js';
 import { useSensors } from '../hooks/useSensors.js';
 
 const FILTERS = [
@@ -13,6 +16,7 @@ const FILTERS = [
 export default function Alerts() {
   const { alerts, loading, error } = useAlerts();
   const { sensors } = useSensors();
+  const { rid } = useResident();
   const [filter, setFilter] = useState('all');
 
   const sensorNames = useMemo(() => Object.fromEntries(sensors.map((s) => [s.id, s.name])), [sensors]);
@@ -47,6 +51,23 @@ export default function Alerts() {
           {count}
         </span>
       </div>
+
+      <section className="panel alerts-cta fw-rise fw-d1" aria-labelledby="alerts-cta">
+        <BellRing size={28} aria-hidden="true" style={{ color: 'var(--accent)', flex: 'none' }} />
+        <div>
+          <h2 id="alerts-cta" className="fw-h3">
+            {rid ? 'You get flood alerts' : 'Get these alerts on your phone'}
+          </h2>
+          <p className="fw-body-s">
+            {rid
+              ? 'Change your sensors or turn on Telegram any time.'
+              : 'Free text message or Telegram alert when the water rises at sensors near you.'}
+          </p>
+        </div>
+        <Link to={rid ? '/account' : '/alerts/get'} className={`fw-btn ${rid ? 'fw-btn--secondary' : 'fw-btn--primary'}`}>
+          {rid ? 'My alerts' : 'Sign up with your number'}
+        </Link>
+      </section>
 
       {error && <p className="notice notice--danger">{error.message}</p>}
       {loading ? (

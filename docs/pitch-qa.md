@@ -74,8 +74,9 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Matrix failure falls back to straight-line order; ORS is a second provider.
     ⚠ Without internet the website can't route — that's why SMS, the LoRa link and the siren live on the hardware.
 18. **How do you prevent SMS spam when water bobs on a threshold?**
-    Texts only when the status *rises*, at most once per 10 min per status, retry after 30 s with no signal
-    (`config.h`).
+    Two layers. The sensor only changes status when 5 of its last 7 measurements agree (about 3 s), so a splash
+    doesn't flip it. The alert service then texts only when the status *rises* (plus one "safe again" message),
+    at most once per 15 min per level per sensor, and never replays old alerts after a restart.
 
 ## D. Security & privacy
 
@@ -88,7 +89,9 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Rules block admins from changing their own admin flag.
 21. **What about user location privacy?**
     Location stays on the phone — used only to check danger zones and route. It's never sent to our database.
-    SMS phone numbers live only on the board, not in Firebase.
+    Phone numbers of residents who sign up for alerts are stored in Firebase, readable only by that resident
+    and admins (who see them masked, 0917 ••• 4567). A number is confirmed with a texted code before it's
+    saved, residents can delete their account any time, and nobody can change their stored number.
 22. **API keys are in the frontend — isn't that a leak?**
     Firebase web config is public by design (security comes from the rules). The Mapbox token is a public
     `pk.` token restricted to our domains.
@@ -136,8 +139,10 @@ Likely panelist questions about the software, each with a short answer drawn fro
 32. **Filipino language support?**
     ⚠ Currently English — Filipino / Batangueño text is a clear next step.
 33. **How are people warned if the site isn't open?**
-    SMS from the sensor unit, plus the siren and LED display on the announcer unit (alerted over LoRa).
-    ⚠ No web push notifications yet; the in-browser alarm sound is a TODO.
+    Residents sign up once with their mobile number and get a text (normal Messages app) or a Telegram message
+    when the water rises at the sensors they picked. Texts go out through an Android phone with a SIM acting as
+    an SMS gateway, so there's no per-text API cost. On site, the alarm unit beeps, speaks and shows the level.
+    ⚠ The alert service must be running (a laptop for the demo); no web push notifications yet.
 34. **Are the hotlines trustworthy?**
     Each hotline has a `verified` flag; unverified numbers hide the call button. The national lines (911, Red Cross 143,
     PAGASA) and the Batangas City lines (CDRRMO, 24/7 health hotline, fire, police, Batangas Medical Center) were checked

@@ -1,4 +1,4 @@
-import { ChevronRight, Info, Lock, Megaphone, Radar } from 'lucide-react';
+import { BellRing, ChevronRight, Info, Lock, Megaphone, Radar } from 'lucide-react';
 import { Link } from 'react-router';
 import { StatusChip } from '../components/ui/Status.jsx';
 import { STATUS } from '../lib/flood.js';
@@ -73,6 +73,11 @@ export default function About() {
         <Link className="list-row" to="/about" aria-current="page">
           <Info size={20} aria-hidden="true" />
           About BahAlert
+        </Link>
+        <Link className="list-row fw-rowlink" to="/account">
+          <BellRing size={20} aria-hidden="true" />
+          Flood alerts by SMS or Telegram
+          <ChevronRight size={20} aria-hidden="true" style={{ marginLeft: 'auto', color: 'var(--text-muted)' }} />
         </Link>
         <Link className="list-row fw-rowlink" to="/admin">
           <Lock size={20} aria-hidden="true" />

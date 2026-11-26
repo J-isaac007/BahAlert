@@ -13,6 +13,8 @@ import SafeZones from './pages/SafeZones.jsx';
 // Chart.js and admin code load only when visited
 const SensorPage = lazy(() => import('./pages/SensorPage.jsx'));
 const Admin = lazy(() => import('./pages/Admin.jsx'));
+const GetAlerts = lazy(() => import('./pages/GetAlerts.jsx'));
+const Account = lazy(() => import('./pages/Account.jsx'));
 
 function Layout() {
   return (
@@ -37,6 +39,8 @@ export default function App() {
         <Route path="safe-zones" element={<SafeZones />} />
         <Route path="hotlines" element={<Hotlines />} />
         <Route path="alerts" element={<Alerts />} />
+        <Route path="alerts/get" element={<GetAlerts />} />
+        <Route path="account" element={<Account />} />
         <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
         <Route

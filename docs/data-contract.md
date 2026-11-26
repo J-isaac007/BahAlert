@@ -21,8 +21,20 @@ listen to `/devices` without downloading every reading.
 
 /admins/{uid}: true          another admin (Admin > Admins) or `npm run make-admin`; nobody edits their own
 /adminProfiles/{uid}  { email, addedBy, addedAt }   written with /admins; admins read the list
-/deviceAuth/{deviceId}: uid  set by hand — the Firebase Auth account each board signs in with
+/deviceAuth/{deviceId}: uid  `node scripts/add-device.mjs` — the Firebase Auth account each board signs in with
+
+/residents/{ph_639XXXXXXXXX}   { name, barangay, watch: {deviceId: true}, channels: {sms, telegram},
+                                 phone, telegramChatId, createdAt }
+                               resident writes name/barangay/watch/channels; alert service writes the rest
+/otpRequests/{anonUid}         { phone, requestedAt, code }  site · { status, token, expiresAt, retryAt, attemptsLeft }  service
+/telegramLinks/{code}          { rid, ts }   resident creates for "Connect Telegram"; service consumes it
+/settings/alerts               { enabled }   admin pause switch (public read)
+/settings/service              { heartbeatAt, startedAt, sms, telegramBot }   alert service heartbeat (public read)
+/otpSecrets, /otpThrottle, /alertLog        alert service only (no client access)
 ```
+
+`devices/{id}/meta.notify` (bool, admin) turns SMS/Telegram alerts on for that sensor. Keep it off for
+simulated sensors.
 
 ## Field rules
 
@@ -50,8 +62,20 @@ else               -> green
 dangerCm           -> the "overflow" line used by minutes-to-overflow
 ```
 
-## SMS (not in the database)
+## Resident alerts (SMS + Telegram)
 
-The device texts the numbers in its `secrets.h` through the 4G modem when the status **rises** into
-yellow or red. Phone numbers never go to Firebase. Texts work without Wi-Fi; until the board first
-reaches Firebase it uses the thresholds in `config.h`.
+`service/` (Node, Admin SDK) watches `/alerts/{id}` for sensors with `meta.notify` and messages the residents
+whose `watch` includes that sensor:
+
+- sends on a **rise** to yellow or red, and on the return to green; red → yellow stays quiet
+- the same level for a sensor at most once per 15 minutes (`alertLog/{id}/last`), each alert once (`alertLog/{id}/sent`)
+- only alerts written after the sensor was switched on, so turning a sensor on never replays old ones
+- SMS through an Android phone running SMS Gateway for Android; Telegram through a bot (long polling)
+
+Sign-up: the site signs in anonymously and writes `otpRequests/{uid}`; the service texts a 6-digit code
+(1 per minute and 5 per day per number, 60 per hour overall), checks it (5 tries, 10 minutes) and answers
+with a custom token for `ph_<digits>`, so a resident is the same account on any device. Residents can only
+change their name, barangay, sensors and channels; `phone` and `telegramChatId` are service-only.
+
+The older production firmware (`firmware/floodwatch_esp32`) also texts the numbers in its `secrets.h`
+through a 4G modem. The prototype has no modem and relies on the service.

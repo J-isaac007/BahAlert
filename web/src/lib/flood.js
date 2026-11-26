@@ -30,6 +30,7 @@ export function toSensor(id, device, now = Date.now()) {
     lng: meta.lng,
     lat: meta.lat,
     radiusM: meta.dangerRadiusM ?? DEFAULT_RADIUS_M,
+    notify: meta.notify === true, // sends SMS/Telegram alerts to residents (Admin > Sensors)
     config: device?.config ?? {},
     live,
     online,
