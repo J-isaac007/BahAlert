@@ -1,0 +1,18 @@
+node_modules/
+dist/
+dev-dist/
+.firebase/
+*.log
+graphify-out/
+
+# secrets
+.env
+.env.*
+!.env.example
+serviceAccount*.json
+firmware/**/secrets.h
+.playwright-mcp/
+# local AI tooling
+.claude/
+.agents/
+skills-lock.json

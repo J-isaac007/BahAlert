@@ -1,0 +1,83 @@
+name: Sensor simulator
+
+# Runs scripts/simulate.mjs on GitHub's servers so the live site shows moving sensors
+# without anyone's laptop staying on.
+#   Start: Actions → Sensor simulator → Run workflow → mode "start"
+#   Stop:  run it again with mode "stop" (or open the running job and press "Cancel workflow")
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: start or stop the simulator
+        type: choice
+        options: [start, stop]
+        default: start
+      minutes:
+        description: How long to run, in minutes (max 350)
+        type: number
+        default: 120
+      clear:
+        description: Wipe old readings, alerts and stats first
+        type: boolean
+        default: false
+
+# Every run joins one group and cancels the run before it, so "stop" (or a fresh "start")
+# ends any simulator that is already running.
+concurrency:
+  group: sensor-simulator
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  simulate:
+    if: inputs.mode == 'start'
+    runs-on: ubuntu-latest
+    timeout-minutes: 360 # GitHub's limit for one job
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+
+      - name: Write service account key
+        env:
+          SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$SERVICE_ACCOUNT" ]; then
+            echo "::error::Add the FIREBASE_SERVICE_ACCOUNT secret (contents of serviceAccount.json)"
+            exit 1
+          fi
+          printf '%s' "$SERVICE_ACCOUNT" > "$RUNNER_TEMP/serviceAccount.json"
+
+      - name: Run simulator
+        env:
+          # Same database the deployed site reads, so the two can never point at different projects
+          FIREBASE_DATABASE_URL: ${{ secrets.VITE_FIREBASE_DATABASE_URL }}
+          MINUTES: ${{ inputs.minutes }}
+          CLEAR: ${{ inputs.clear }}
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/serviceAccount.json"
+          if ! [ "$MINUTES" -ge 1 ] 2>/dev/null || [ "$MINUTES" -gt 350 ]; then
+            echo "::error::minutes must be between 1 and 350"
+            exit 1
+          fi
+          ARGS=""
+          if [ "$CLEAR" = "true" ]; then ARGS="--clear"; fi
+          echo "Simulating for $MINUTES minutes"
+          # timeout exits 124 when time is up; that is the normal way this ends
+          timeout "${MINUTES}m" node scripts/simulate.mjs $ARGS || [ $? -eq 124 ]
+
+      - name: Delete key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/serviceAccount.json"
+
+  stop:
+    if: inputs.mode == 'stop'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Simulator stopped. Sensors show offline on the site within 60 seconds."
