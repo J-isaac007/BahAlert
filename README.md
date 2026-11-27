@@ -1,6 +1,16 @@
-# BahAlert
+<p align="center">
+  <img src="docs/assets/bahalert-banner.svg" alt="BahAlert: Minutes matter. We give communities those minutes." width="100%">
+</p>
 
-**Minutes matter. We give communities those minutes.**
+<p align="center">
+  <a href="https://j-isaac007.github.io/BahAlert"><b>Live site</b></a> ·
+  <a href="#features">Features</a> ·
+  <a href="#quick-start-no-hardware">Quick start</a> ·
+  <a href="#connect-the-prototype-hardware">Hardware</a> ·
+  <a href="#team">Team</a>
+</p>
+
+# BahAlert
 
 BahAlert is a low-cost community flood warning system for Batangas City. Sensors above creeks and rivers measure
 the water level, and an alarm sounds nearby when it rises. Residents get a warning by SMS or Telegram, and a
