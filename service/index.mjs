@@ -5,7 +5,8 @@
 //   SMS_GATEWAY_URL                      (optional; local mode: http://<phone-ip>:8080/message)
 //   TELEGRAM_BOT_TOKEN                   (from @BotFather) - without it the bot is off
 //   TELEGRAM_ALERT_CHAT_IDS              (optional) chat ids that always get alerts, e.g. the team's: 6142056216,123
-//   BRIDGE_PORT                          (default 3000; 0 = off) local endpoints for the prototype ESP32s
+//   BRIDGE_PORT                          (default off) e.g. 3000: run the prototype ESP32 endpoints here
+//                                        instead of the team's server (firmware/team-server)
 //   BRIDGE_DEVICE_ID                     (default bah-001) which sensor those readings belong to
 //   PUBLIC_SITE_URL                      (links in messages; default the GitHub Pages site)
 // Keep it running (laptop or always-on VM): it must be up to send codes and alerts.
@@ -28,7 +29,8 @@ const stopOtp = startOtp({ db, auth });
 const alerts = startAlerts({ db, siteUrl, startedAt });
 
 // Local endpoints for the prototype ESP32 sketches (POST /api/level, GET /api/alarm)
-const bridgePort = Number(process.env.BRIDGE_PORT ?? 3000);
+// Off unless BRIDGE_PORT is set: the team's own server (firmware/team-server) normally owns port 3000
+const bridgePort = Number(process.env.BRIDGE_PORT || 0);
 let bridge = null;
 if (bridgePort) {
   bridge = startBridge({ db, port: bridgePort, deviceId: process.env.BRIDGE_DEVICE_ID || 'bah-001' });

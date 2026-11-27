@@ -1,0 +1,7 @@
+{
+  "apiKey": "AIza... (web/.env VITE_FIREBASE_API_KEY)",
+  "databaseUrl": "https://floodwatch-993ef-default-rtdb.asia-southeast1.firebasedatabase.app",
+  "deviceId": "bah-001",
+  "email": "bah-001@bahalert.local",
+  "password": "the board password from firmware/bahalert_sensor/secrets.h"
+}

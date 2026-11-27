@@ -100,18 +100,14 @@ firebase deploy             # hosting + database rules
 
 ## 4. Connect the prototype hardware
 
-**Option A — keep the team's sketches (`flood_sensor.ino`, `alarm_system.ino`).** They talk to a laptop on the
-same Wi-Fi. The alert service now plays that server's part, with the same endpoints and JSON:
+**Option A — the team's sketches and server (what the prototype uses).** The ESP32s post to the team's own
+Node server on a laptop (`POST /api/level`, `GET /api/alarm`); it runs the alarm and sends Telegram. To put the
+readings on the website, run that server from `firmware/team-server/` (see its README): two added lines and
+`bahalert-link.js` forward every reading to Firebase as `bah-001` (NORMAL → green, LOW → yellow, MEDIUM/HIGH →
+red), so the map, charts and alert log go live. It needs the private `bahalert.config.json` (gitignored).
 
-```bash
-node service/index.mjs      # also listens on :3000 -> POST /api/level, GET /api/alarm, GET /status
-```
-
-It prints the laptop's addresses; the sketches' `SERVER_URL` must match one of them (e.g. `http://192.168.1.2:3000/...`).
-Allow Node through Windows Firewall on *private* networks when asked. Every reading goes to Firebase as
-`bah-001` (website live), and level changes become alerts: NORMAL → green, LOW → yellow, MEDIUM/HIGH → red.
-Telegram alerts go to residents who linked the bot and to `TELEGRAM_ALERT_CHAT_IDS`, once Admin → Sensors has
-alerts switched on for `bah-001`.
+(`node service/index.mjs` can also serve those endpoints itself with `BRIDGE_PORT=3000`, if the team's server
+isn't running.)
 
 **Option B — boards write to Firebase themselves (no laptop).** Full steps, wiring and thresholds:
 `firmware/README.md`. In short:
