@@ -11,6 +11,7 @@ graphify-out/
 !.env.example
 serviceAccount*.json
 firmware/**/secrets.h
+firmware/**/bahalert.config.json
 .playwright-mcp/
 # local AI tooling
 .claude/

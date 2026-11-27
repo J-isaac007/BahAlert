@@ -1,0 +1,9 @@
+{
+  "name": "bahalert-team-server",
+  "private": true,
+  "type": "commonjs",
+  "description": "The team's prototype flood server (ESP32 endpoints) with the BahAlert website link. No dependencies.",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

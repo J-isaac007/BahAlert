@@ -100,7 +100,17 @@ firebase deploy             # hosting + database rules
 
 ## 4. Connect the prototype hardware
 
-Full steps, wiring and thresholds: `firmware/README.md`. In short:
+**Option A — the team's sketches and server (what the prototype uses).** The ESP32s post to the team's own
+Node server on a laptop (`POST /api/level`, `GET /api/alarm`); it runs the alarm and sends Telegram. To put the
+readings on the website, run that server from `firmware/team-server/` (see its README): two added lines and
+`bahalert-link.js` forward every reading to Firebase as `bah-001` (NORMAL → green, LOW → yellow, MEDIUM/HIGH →
+red), so the map, charts and alert log go live. It needs the private `bahalert.config.json` (gitignored).
+
+(`node service/index.mjs` can also serve those endpoints itself with `BRIDGE_PORT=3000`, if the team's server
+isn't running.)
+
+**Option B — boards write to Firebase themselves (no laptop).** Full steps, wiring and thresholds:
+`firmware/README.md`. In short:
 
 1. `node scripts/add-device.mjs bah-001 "<name>" <barangay> <lat> <lng> --secrets firmware/bahalert_sensor/secrets.h`
    makes the board's login, `/deviceAuth/bah-001`, desk-test thresholds and its `secrets.h`.

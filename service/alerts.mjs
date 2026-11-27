@@ -33,7 +33,14 @@ export function startAlerts({ db, siteUrl, startedAt = Date.now() }) {
     const text = alertText({ deviceId, name: meta.name ?? deviceId, barangay: meta.barangay, from: alert.from, to: alert.to, levelCm: alert.levelCm }, siteUrl);
     const watchers = [...residents.values()].filter((r) => r.watch?.[deviceId]);
     const phones = watchers.filter((r) => r.channels?.sms && r.phone).map((r) => r.phone);
-    const chats = watchers.filter((r) => r.channels?.telegram && r.telegramChatId).map((r) => r.telegramChatId);
+    // Residents who linked Telegram, plus fixed chats from TELEGRAM_ALERT_CHAT_IDS (team / barangay group)
+    const fixedChats = String(process.env.TELEGRAM_ALERT_CHAT_IDS ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const chats = [
+      ...new Set([...watchers.filter((r) => r.channels?.telegram && r.telegramChatId).map((r) => String(r.telegramChatId)), ...fixedChats]),
+    ];
 
     let sms = 0;
     let telegram = 0;
