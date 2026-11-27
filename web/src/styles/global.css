@@ -156,6 +156,8 @@ h1, h2, h3, p { margin: 0; }
 .mapboxgl-ctrl-logo { opacity: .7; }
 .mapboxgl-ctrl-scale { background: color-mix(in srgb, var(--bg-surface) 82%, transparent); color: var(--text-secondary); border-color: var(--border-strong); }
 .mapboxgl-ctrl-geolocate-hidden { display: none !important; }
+/* Markers carry inline z-index 1-4, so the popup must sit above them or nearby pins draw over it */
+.fw-mapbox-popup { z-index: 10; }
 .fw-mapbox-popup .mapboxgl-popup-content { padding: 0; background: transparent; box-shadow: none; border-radius: var(--radius-lg); }
 .fw-mapbox-popup.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
 .fw-mapbox-popup.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
