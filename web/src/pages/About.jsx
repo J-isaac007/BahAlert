@@ -1,7 +1,9 @@
-import { BellRing, ChevronRight, Info, Lock, Megaphone, Radar } from 'lucide-react';
+import { BellRing, ChevronRight, Info, LayoutDashboard, Lock, Megaphone, Radar } from 'lucide-react';
 import { Link } from 'react-router';
 import { StatusChip } from '../components/ui/Status.jsx';
+import { useAuth } from '../hooks/useAuth.js';
 import { STATUS } from '../lib/flood.js';
+import { isResidentUid } from '../lib/phone.js';
 import aifaPhoto from '../assets/team/aifa.jpg';
 import christianPhoto from '../assets/team/christian.jpg';
 import edzelPhoto from '../assets/team/edzel.jpg';
@@ -66,6 +68,8 @@ const COLOURS = [
 ];
 
 export default function About() {
+  const { user } = useAuth();
+  const adminSignedIn = Boolean(user?.email) && !isResidentUid(user.uid); // same rule as the desktop nav
   return (
     <div className="page page--narrow about-page fw-waves">
       {/* Mobile "More" tab: the bottom nav has no room for Admin */}
@@ -80,8 +84,8 @@ export default function About() {
           <ChevronRight size={20} aria-hidden="true" style={{ marginLeft: 'auto', color: 'var(--text-muted)' }} />
         </Link>
         <Link className="list-row fw-rowlink" to="/admin">
-          <Lock size={20} aria-hidden="true" />
-          Admin login
+          {adminSignedIn ? <LayoutDashboard size={20} aria-hidden="true" /> : <Lock size={20} aria-hidden="true" />}
+          {adminSignedIn ? 'Admin' : 'Admin login'}
           <ChevronRight size={20} aria-hidden="true" style={{ marginLeft: 'auto', color: 'var(--text-muted)' }} />
         </Link>
       </nav>

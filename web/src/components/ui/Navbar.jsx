@@ -1,4 +1,4 @@
-import { Bell, BellRing, Lock, LogOut, Map, Menu, Phone, Radio, ShieldCheck, WifiOff } from 'lucide-react';
+import { Bell, BellRing, LayoutDashboard, Lock, LogOut, Map, Menu, Phone, Radio, ShieldCheck, WifiOff } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { logout, useAuth } from '../../hooks/useAuth.js';
 import { useSensors } from '../../hooks/useSensors.js';
@@ -11,11 +11,15 @@ const LINKS = [
   { to: '/safe-zones', label: 'Safe zones', icon: ShieldCheck },
   { to: '/hotlines', label: 'Hotlines', icon: Phone },
   { to: '/alerts', label: 'Alerts', icon: Bell },
-  { to: '/about', label: 'About', mobileLabel: 'More', icon: Menu, match: (p) => ['/about', '/login', '/admin', '/account'].includes(p) },
+  // Mobile "More" covers login/admin/account; the desktop bar has its own Admin / My alerts link for those
+  { to: '/about', label: 'About', mobileLabel: 'More', icon: Menu, match: (p) => ['/about', '/login', '/admin', '/account'].includes(p), desktopMatch: (p) => p === '/about' },
 ];
 
-const isActive = (link, path) => (link.match ? link.match(path) : path.startsWith(link.to));
-const current = (link, path) => (isActive(link, path) ? 'page' : undefined);
+const isActive = (link, path, desktop) => {
+  const match = (desktop && link.desktopMatch) || link.match;
+  return match ? match(path) : path.startsWith(link.to);
+};
+const current = (link, path, desktop = false) => (isActive(link, path, desktop) ? 'page' : undefined);
 
 function LiveChip() {
   const { sensors, loading } = useSensors();
@@ -48,7 +52,7 @@ export function TopNav() {
       </Link>
       <nav className="fw-topnav__links" aria-label="Main">
         {LINKS.map((l) => (
-          <Link key={l.to} to={l.to} className="fw-toplink" aria-current={current(l, pathname)}>
+          <Link key={l.to} to={l.to} className="fw-toplink" aria-current={current(l, pathname, true)}>
             {l.label}
           </Link>
         ))}
@@ -65,6 +69,11 @@ export function TopNav() {
           <span className="fw-caption topnav-email" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
             {user.email}
           </span>
+          {/* Way back to the admin pages after browsing the public ones */}
+          <Link to="/admin" className="fw-topnav__admin" aria-current={pathname === '/admin' ? 'page' : undefined}>
+            <LayoutDashboard size={18} aria-hidden="true" />
+            Admin
+          </Link>
           <button type="button" className="fw-topnav__admin" onClick={logout} style={{ border: 0, background: 'none', cursor: 'pointer' }}>
             <LogOut size={18} aria-hidden="true" />
             Log out
