@@ -11,7 +11,7 @@ Both prototype boards only need Wi-Fi; no laptop server.
 ## 1. Register the sensor (once)
 
 ```powershell
-node scripts/add-device.mjs bah-001 "Prototype sensor — BatStateU Alangilan" Alangilan 13.7837 121.0745 --secrets firmware/bahalert_sensor/secrets.h
+node scripts/add-device.mjs bah-001 "Prototype sensor - bah-001" Alangilan 13.7837 121.0745 --secrets firmware/bahalert_sensor/secrets.h
 ```
 
 This makes the board's own Firebase login, links it in `/deviceAuth/bah-001`, writes desk-test thresholds and writes `secrets.h` (gitignored). Set `WIFI_SSID` / `WIFI_PASSWORD` in the environment first, or edit them in `secrets.h` afterwards. Add `--reset-password` to rewrite `secrets.h` for an existing board.

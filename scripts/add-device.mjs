@@ -1,5 +1,5 @@
 // Registers a real sensor board: its own login, /deviceAuth, meta and config.
-//   node scripts/add-device.mjs bah-001 "Prototype sensor — BatStateU Alangilan" Alangilan 13.7837 121.0745
+//   node scripts/add-device.mjs bah-001 "Prototype sensor - bah-001" Alangilan 13.7837 121.0745
 // Options:
 //   --secrets <path>   write the board's secrets.h there (gitignored) instead of printing the password
 //   --reset-password   give an existing board login a new password (needed to rewrite secrets.h)
