@@ -21,9 +21,15 @@ Likely panelist questions about the software, each with a short answer drawn fro
 ## B. Architecture & tech stack
 
 5. **Walk us through the architecture.**
-   Sensor unit (ESP32 + radar) → 4G → Firebase Realtime Database → React + Vite web app (Mapbox map, Chart.js).
-   The sensor also texts residents via its 4G modem and sends alerts over LoRa radio to a separate announcer
-   unit (LED display + siren), so the local warning works without internet or cell signal.
+   Two versions, so be clear which one you mean.
+   **Prototype (what we demo):** the sensor ESP32 (ultrasonic) posts each reading to the team's backend, a small
+   Node server on Render. The backend tells the alarm ESP32 (LCD + speaker) when to sound, messages the team's
+   Telegram chat on MEDIUM or HIGH, and forwards every reading to Firebase Realtime Database. The React + Vite
+   website (Mapbox map, Chart.js) reads Firebase live. Our alert service watches the alerts in Firebase and
+   texts or Telegrams the residents who follow that sensor.
+   **Production design:** the sensor unit (ESP32 + radar) writes to Firebase over 4G with no server in between,
+   texts residents through its own 4G modem, and sends alerts over LoRa radio to a separate announcer unit
+   (LED display + siren), so the local warning works without internet or cell signal.
 6. **Why Firebase Realtime Database instead of SQL / your own server?**
    Live push to every browser with no backend to run, free tier, built-in auth and security rules,
    Asia-Southeast region.
@@ -49,7 +55,10 @@ Likely panelist questions about the software, each with a short answer drawn fro
     ⚠ Production firmware for the radar, LoRa link and announcer unit is still to be written.
 11. **How is green / yellow / red decided?**
     `getStatus` in `web/src/lib/flood.js`: ≥ redCm → red, ≥ yellowCm → yellow, else green. Thresholds are
-    per-sensor in `/devices/{id}/config` (firmware defaults: yellow 40, red 60, overflow 80 cm).
+    per-sensor in `/devices/{id}/config` (field defaults in `firmware/floodwatch_esp32`: yellow 40, red 60,
+    overflow 80 cm). The demo prototype decides its own level (NORMAL / LOW / MEDIUM / HIGH), and
+    `service/bridge.mjs` maps it to colours: NORMAL → green, LOW → yellow, MEDIUM and HIGH → red. Its defaults
+    are set for a desk test with the sensor 50 cm above a table (yellow 10, red 20, overflow 27 cm).
 12. **How do you compute "minutes to overflow"? How accurate is it?**
     Least-squares slope over the last 3 minutes (at least 5 points) gives the rise rate in cm/min;
     ETA = (overflow line − level) ÷ rate. Below 0.05 cm/min it shows "Stable / falling".
@@ -123,8 +132,11 @@ Likely panelist questions about the software, each with a short answer drawn fro
     `npm run seed` + `npm run simulate`: fake sensors rise and fall on a 6-minute cycle, written exactly like
     the firmware. Danger alerts tested by spoofing GPS in Chrome DevTools.
 28. **Do you have automated tests?**
-    Unit tests for flood logic, geo logic and server time (`flood.test.js`, `geo.test.js`,
-    `serverTime.test.js` — `npm test`). ⚠ No end-to-end or field tests yet.
+    Yes, unit tests. Website (`cd web && npm test`): flood rules and ETA, danger-zone checks, safe routing around
+    red zones, phone number checks and server time (`flood`, `geo`, `routing`, `phone`, `serverTime` .test.js).
+    Alert service (`node --test service/messages.test.mjs service/bridge.test.mjs`): alert texts and the
+    160-character limit, when to send and when not to, and how prototype levels map to colours.
+    ⚠ No end-to-end or field tests yet.
 29. **How accurate is the sensor?**
     ⚠ Not yet field-calibrated — plan: compare against a ruler. Like any level sensor, the radar has a
     minimum range (blind zone) — check its datasheet and mount it at least that far above the highest water.
@@ -142,7 +154,8 @@ Likely panelist questions about the software, each with a short answer drawn fro
     Residents sign up once with their mobile number and get a text (normal Messages app) or a Telegram message
     when the water rises at the sensors they picked. Texts go out through an Android phone with a SIM acting as
     an SMS gateway, so there's no per-text API cost. On site, the alarm unit beeps, speaks and shows the level.
-    ⚠ The alert service must be running (a laptop for the demo); no web push notifications yet.
+    ⚠ The alert service must be running on an always-on machine (a laptop for the demo), and the SMS phone must
+    stay charged and online. No web push notifications yet.
 34. **Are the hotlines trustworthy?**
     Each hotline has a `verified` flag; unverified numbers hide the call button. The national lines (911, Red Cross 143,
     PAGASA) and the Batangas City lines (CDRRMO, 24/7 health hotline, fire, police, Batangas Medical Center) were checked
@@ -152,14 +165,20 @@ Likely panelist questions about the software, each with a short answer drawn fro
 ## H. Sustainability & future
 
 35. **Who maintains it after the bootcamp?**
-    The barangay DRRM office as admins; there's no server to maintain; safe zones and hotlines are edited from
-    the admin page (⚠ device threshold/location edit form is still TODO).
+    The barangay DRRM office, as admins. From the admin page they edit safe zones and hotlines, calibrate
+    sensors, switch alerts on or off per sensor, and invite other admins. The website itself needs no server
+    (GitHub Pages + Firebase).
+    ⚠ Two things do have to keep running: the alert service that texts residents (plus its SMS phone), and, for
+    the prototype, the team's backend on Render. The production sensor writes to Firebase directly, so the
+    backend goes away, but the alert service still needs an always-on machine.
+    ⚠ Editing a sensor's thresholds, name or location from the admin page is still TODO (done in Firebase for now).
 36. **What's next?**
     Push notifications, Filipino UI, hazard-map-based zones, device config form, chart downsampling, offline
     (PWA) map caching, PAGASA rainfall data for better ETAs.
 37. **How does it scale to other LGUs?**
-    Adding a sensor = one database entry + one sensor unit (plus an announcer unit where people need to see
-    and hear warnings); the site needs no code change (README §4).
+    Adding a sensor = registering it with `scripts/add-device.mjs` + one sensor unit (plus an announcer unit
+    where people need to see and hear warnings); the site needs no code change (README, "Connect the prototype
+    hardware").
 38. **What was the biggest technical challenge?**
     Pick one honestly: sensor freshness (device clocks drift, so we use server timestamps), or routing around
     danger zones with free APIs.

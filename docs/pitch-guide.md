@@ -226,7 +226,3 @@ and the LCD changes level. Make clear it is the **test prototype**, and that the
 - [ ] Look up official water level stations in Batangas City (question 6).
 - [ ] Each person knows which questions they answer: Isaac on software, Luan on hardware, Aifa and Christian on
       impact and cost, Edzel on team and plans.
-- [ ] Update [pitch-qa.md](pitch-qa.md) where it's out of date: question 5 describes only the production design (the
-      demo prototype goes through the team's backend on Render), question 35 says there's no server to maintain
-      (the alert service and backend must keep running), and question 28 doesn't list the routing, phone number and
-      alert service tests.
