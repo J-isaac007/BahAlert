@@ -111,7 +111,7 @@ web/            React + Vite website
 service/        alert service: sign-up codes, SMS and Telegram alerts, Telegram bot
 scripts/        seed sample data, simulate sensors, register a board, make an admin
 firmware/       ESP32 sketches that write to Firebase directly, and team-server/ (reference copy of the link)
-docs/           data-contract.md (Firebase shape), pitch-qa.md (pitch questions and answers)
+docs/           data-contract.md (Firebase shape), pitch-qa.md (technical Q&A), pitch-guide.md (pitch plan and judge Q&A)
 design-system/  brand and UI design files
 .github/        deploy to GitHub Pages, run the simulator on GitHub
 ```
