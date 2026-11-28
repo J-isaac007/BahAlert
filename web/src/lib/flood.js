@@ -13,6 +13,23 @@ export function getStatus(levelCm, { yellowCm, redCm }) {
   return STATUS.GREEN;
 }
 
+const round1 = (v) => Math.round(v * 10) / 10;
+
+// The config update for Admin > Sensors > Calibrate: the sensor's current distance becomes its height.
+// Most sensors pick their colour from the water level, so their lines stay put. A board that picks its
+// colour from distance (the prototype: config.boardDistances = { yellow, red, danger } in cm from the
+// sensor) gets its lines moved with the height, so the chart and gauge keep matching the board's colours.
+export function calibrationUpdate(config, heightCm) {
+  const update = { sensorHeightCm: round1(heightCm) };
+  const d = config?.boardDistances;
+  if (d) {
+    for (const [key, field] of [['yellow', 'yellowCm'], ['red', 'redCm'], ['danger', 'dangerCm']]) {
+      if (Number.isFinite(d[key])) update[field] = round1(heightCm - d[key]);
+    }
+  }
+  return update;
+}
+
 // `ts` is stamped by the server, so the app passes server time as `now` (see useNow).
 export function isOnline(ts, now = Date.now()) {
   return Number.isFinite(ts) && now - ts <= OFFLINE_AFTER_MS;

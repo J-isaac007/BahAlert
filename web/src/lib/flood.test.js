@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest';
-import { STATUS, computeRate, formatEta, getStatus, isOnline, minutesToOverflow, toSensor } from './flood.js';
+import { STATUS, calibrationUpdate, computeRate, formatEta, getStatus, isOnline, minutesToOverflow, toSensor } from './flood.js';
+
+describe('calibrationUpdate', () => {
+  it('only sets the height for a sensor that picks its colour from the water level', () => {
+    expect(calibrationUpdate({ sensorHeightCm: 50, yellowCm: 10, redCm: 20, dangerCm: 27 }, 67.2)).toEqual({ sensorHeightCm: 67.2 });
+  });
+
+  it("moves the lines with the height for a board that picks its colour from distance", () => {
+    const config = { sensorHeightCm: 50, yellowCm: 10, redCm: 20, dangerCm: 27, boardDistances: { yellow: 40, red: 30, danger: 23 } };
+    expect(calibrationUpdate(config, 67)).toEqual({ sensorHeightCm: 67, yellowCm: 27, redCm: 37, dangerCm: 44 });
+    // the 50 cm desk test gives back the original lines
+    expect(calibrationUpdate(config, 50)).toEqual({ sensorHeightCm: 50, yellowCm: 10, redCm: 20, dangerCm: 27 });
+  });
+});
 
 const cfg = { yellowCm: 40, redCm: 60, dangerCm: 80 };
 

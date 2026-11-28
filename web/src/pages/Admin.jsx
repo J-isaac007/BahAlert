@@ -7,6 +7,7 @@ import { useAdmins } from '../hooks/useAdmins.js';
 import { logout, useAuth } from '../hooks/useAuth.js';
 import { toList, useDbValue } from '../hooks/useDbValue.js';
 import { useAlertService } from '../hooks/useResident.js';
+import { calibrationUpdate } from '../lib/flood.js';
 import { maskPhone } from '../lib/phone.js';
 import { useHotlines } from '../hooks/useHotlines.js';
 import { useSafeZones } from '../hooks/useSafeZones.js';
@@ -66,8 +67,10 @@ function SensorsTab() {
   const calibrate = (s) => {
     const d = s.live?.distanceCm;
     if (!s.online || !Number.isFinite(d)) return;
-    if (!window.confirm(`Set ${s.name}'s height to ${d} cm? Only do this when the channel under it is empty (no water).`)) return;
-    run(update(ref(db, `devices/${s.id}/config`), { sensorHeightCm: d }));
+    const next = calibrationUpdate(s.config, d);
+    const lines = 'yellowCm' in next ? ` The yellow / red / overflow lines move to ${next.yellowCm} / ${next.redCm} / ${next.dangerCm} cm to match the board.` : '';
+    if (!window.confirm(`Set ${s.name}'s height to ${next.sensorHeightCm} cm?${lines} Only do this when the channel under it is empty (no water).`)) return;
+    run(update(ref(db, `devices/${s.id}/config`), next));
   };
 
   return (

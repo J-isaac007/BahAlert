@@ -9,7 +9,7 @@ listen to `/devices` without downloading every reading.
 ```
 /devices/{deviceId}
   meta:    { name, barangay, lat, lng, dangerRadiusM }            admin writes
-  config:  { sensorHeightCm, yellowCm, redCm, dangerCm, intervalSec }   admin writes, device reads
+  config:  { sensorHeightCm, yellowCm, redCm, dangerCm, intervalSec, boardDistances? }   admin writes, device reads
   live:    { levelCm, distanceCm, tempC, batteryV, status, ts }   device writes every ~2 s
 
 /readings/{deviceId}/{pushId}   { levelCm, distanceCm, tempC, ts }        device pushes every ~5 s
@@ -61,6 +61,11 @@ level >= yellowCm  -> yellow
 else               -> green
 dangerCm           -> the "overflow" line used by minutes-to-overflow
 ```
+
+`config.boardDistances` `{ yellow, red, danger }` (cm from the sensor to the water) is set only for a board that
+picks its colour from **distance** instead of from `config`: the prototype (`bah-001`), whose sketch says LOW at
+40 cm, MEDIUM at 30 cm and HIGH at 23 cm. Admin > Sensors > Calibrate then sets `yellowCm = height − yellow`
+(and the same for red and danger), so the chart and gauge lines keep matching the board's colours.
 
 ## Resident alerts (SMS + Telegram)
 
